@@ -3,51 +3,59 @@ import { Leaf, Menu, X } from "lucide-react";
 
 const links = [
   { label: "О проекте", href: "#about" },
-  { label: "Достижения", href: "#achievements" },
+  { label: "Возможности", href: "#features" },
   { label: "Платформы", href: "#platforms" },
+  { label: "Учителям", href: "#teacher" },
   { label: "Отзывы", href: "#reviews" },
-  { label: "Контакты", href: "#contacts" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Контакты", href: "#contact" },
 ];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-50 bg-background/96 backdrop-blur-md border-b border-primary/15 shadow-sm">
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
-        <a href="#" className="flex items-center gap-2 font-black text-xl text-foreground">
-          <Leaf className="w-6 h-6 text-primary" />
-          Eco<span className="text-primary">Bala</span>
+        <a href="#" className="flex items-center gap-2 font-black text-lg text-eco-forest no-underline">
+          <Leaf className="w-5 h-5 text-primary" />
+          <span className="text-eco-forest">Eco</span><span className="text-primary">Bala</span>
         </a>
 
-        {/* Desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-muted-foreground hover:text-primary font-semibold transition-colors text-sm">
+            <a key={l.href} href={l.href} className="text-muted-foreground hover:text-primary font-bold transition-colors text-sm">
               {l.label}
             </a>
           ))}
         </div>
 
-        {/* Mobile toggle */}
-        <button onClick={() => setOpen(!open)} className="md:hidden text-foreground">
+        <div className="hidden md:flex items-center gap-3">
+          <a href="#features" className="eco-gradient text-primary-foreground px-5 py-2.5 rounded-full text-sm font-bold transition-transform hover:scale-105 shadow-eco no-underline">
+            Начать бесплатно
+          </a>
+        </div>
+
+        <button onClick={() => setOpen(!open)} className="lg:hidden text-foreground">
           {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-background border-b border-border px-4 pb-4 space-y-2">
+        <div className="lg:hidden bg-background border-b border-border px-4 pb-4 space-y-1">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
               onClick={() => setOpen(false)}
-              className="block py-2 text-muted-foreground hover:text-primary font-semibold transition-colors"
+              className="block py-3 text-muted-foreground hover:text-primary font-bold transition-colors border-b border-border/50 last:border-0"
             >
               {l.label}
             </a>
           ))}
+          <a href="#features" className="block eco-gradient text-primary-foreground text-center rounded-full py-3 font-bold mt-2 no-underline">
+            Начать бесплатно
+          </a>
         </div>
       )}
     </nav>
