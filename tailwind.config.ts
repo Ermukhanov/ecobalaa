@@ -47,6 +47,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        eco: {
+          leaf: "hsl(var(--eco-leaf))",
+          forest: "hsl(var(--eco-forest))",
+          mint: "hsl(var(--eco-mint))",
+          sky: "hsl(var(--eco-sky))",
+          earth: "hsl(var(--eco-earth))",
+          kids: "hsl(var(--eco-kids))",
+          teen: "hsl(var(--eco-teen))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
