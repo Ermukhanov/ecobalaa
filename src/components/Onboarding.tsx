@@ -6,43 +6,43 @@ interface Props {
 }
 
 const languages = [
-  { id: "ru", label: "Русский", flag: "🇷🇺" },
   { id: "kz", label: "Қазақша", flag: "🇰🇿" },
+  { id: "ru", label: "Русский", flag: "🇷🇺" },
 ];
 
 const sources = [
-  { id: "social", label: "Соцсети", icon: "📱" },
-  { id: "friend", label: "Друзья", icon: "👫" },
-  { id: "school", label: "Школа / учитель", icon: "🏫" },
-  { id: "search", label: "Поиск в интернете", icon: "🔍" },
-  { id: "other", label: "Другое", icon: "💬" },
+  { id: "social", label: "Әлеуметтік желілер", icon: "📱" },
+  { id: "friend", label: "Достар", icon: "👫" },
+  { id: "school", label: "Мектеп / мұғалім", icon: "🏫" },
+  { id: "search", label: "Интернеттен іздеу", icon: "🔍" },
+  { id: "other", label: "Басқа", icon: "💬" },
 ];
 
 const awaits: Record<string, { icon: string; text: string }[]> = {
   kids: [
-    { icon: "🎥", text: "Видео-уроки с тестами на русском и казахском" },
-    { icon: "🎮", text: "EcoGame — викторина с классом в реальном времени" },
-    { icon: "🏆", text: "Бейджи, Eco Points и уровни 🌱🌿🌳" },
-    { icon: "🐹", text: "Чат-бот хомяк — твой эко-помощник" },
+    { icon: "🎥", text: "Қазақша және орысша бейне-сабақтар" },
+    { icon: "🎮", text: "EcoGame — сыныппен нақты уақытта викторина" },
+    { icon: "🏆", text: "Белгілер, Eco Points және деңгейлер 🌱🌿🌳" },
+    { icon: "🐹", text: "Хомяк чат-бот — эко-көмекшің" },
   ],
   teen: [
-    { icon: "🗺️", text: "Реальные квесты: субботники, посадка деревьев" },
-    { icon: "📸", text: "Фото-отчёты и верификация заданий" },
-    { icon: "📊", text: "Рейтинг школ по всему Казахстану" },
-    { icon: "🔥", text: "Система Streak — ежедневные бонусы" },
+    { icon: "🗺️", text: "Нақты квесттер: сенбіліктер, ағаш отырғызу" },
+    { icon: "📸", text: "Фото-есептер және тапсырмаларды тексеру" },
+    { icon: "📊", text: "Қазақстан бойынша мектеп рейтингі" },
+    { icon: "🔥", text: "Streak жүйесі — күнделікті бонустар" },
   ],
   teacher: [
-    { icon: "🎮", text: "EcoGame — создавайте комнаты для викторин" },
-    { icon: "📋", text: "Панель управления классами и учениками" },
-    { icon: "🏅", text: "Автоматический подсчёт, медали, подиум" },
-    { icon: "📺", text: "Игра на интерактивной доске / проекторе" },
+    { icon: "🎮", text: "EcoGame — викторинаға бөлмелер жасаңыз" },
+    { icon: "📋", text: "Сыныптар мен оқушыларды басқару панелі" },
+    { icon: "🏅", text: "Автоматты есептеу, медальдар, подиум" },
+    { icon: "📺", text: "Интерактивті тақтада / проекторда ойын" },
   ],
 };
 
 const steps = [
-  { id: "lang", title: "Выберите язык", Icon: Globe },
-  { id: "source", title: "Откуда вы о нас узнали?", Icon: Megaphone },
-  { id: "awaits", title: "Что вас ждёт", Icon: Sparkles },
+  { id: "lang", title: "Тілді таңдаңыз", Icon: Globe },
+  { id: "source", title: "Біз туралы қайдан білдіңіз?", Icon: Megaphone },
+  { id: "awaits", title: "Сізді не күтеді", Icon: Sparkles },
 ];
 
 const Onboarding = ({ role }: Props) => {
@@ -55,15 +55,11 @@ const Onboarding = ({ role }: Props) => {
   const next = () => {
     if (step < 2) {
       setStep(step + 1);
-    } else {
-      // User said they'll add login/register themselves
-      // For now just show a placeholder
     }
   };
 
   return (
     <div className="h-[100dvh] w-full bg-gradient-to-b from-[hsl(195,80%,88%)] via-[hsl(150,50%,94%)] to-background flex flex-col">
-      {/* Progress */}
       <div className="pt-6 px-6">
         <div className="flex gap-2 max-w-sm mx-auto">
           {steps.map((_, i) => (
@@ -72,7 +68,6 @@ const Onboarding = ({ role }: Props) => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="mb-2">
           {(() => {
@@ -82,7 +77,6 @@ const Onboarding = ({ role }: Props) => {
         </div>
         <h2 className="text-2xl md:text-3xl font-black text-foreground mb-6 text-center">{steps[step].title}</h2>
 
-        {/* Step 0: Language */}
         {step === 0 && (
           <div className="space-y-3 max-w-sm w-full">
             {languages.map((l) => (
@@ -102,7 +96,6 @@ const Onboarding = ({ role }: Props) => {
           </div>
         )}
 
-        {/* Step 1: Source */}
         {step === 1 && (
           <div className="space-y-2 max-w-sm w-full">
             {sources.map((s) => (
@@ -122,7 +115,6 @@ const Onboarding = ({ role }: Props) => {
           </div>
         )}
 
-        {/* Step 2: What awaits */}
         {step === 2 && (
           <div className="space-y-3 max-w-sm w-full">
             {(awaits[role] || awaits.kids).map((item, i) => (
@@ -135,14 +127,13 @@ const Onboarding = ({ role }: Props) => {
         )}
       </div>
 
-      {/* Bottom button */}
       <div className="px-6 pb-8">
         <button
           onClick={next}
           disabled={!canNext}
           className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 eco-gradient text-primary-foreground py-4 rounded-full font-bold text-base shadow-eco hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:hover:scale-100"
         >
-          {step < 2 ? "Далее" : "Войти / Регистрация"}
+          {step < 2 ? "Келесі" : "Кіру / Тіркелу"}
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
