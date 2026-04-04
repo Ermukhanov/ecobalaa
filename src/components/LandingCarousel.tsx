@@ -5,14 +5,11 @@ interface Props {
   onEnd: () => void;
 }
 
-/* ─── slide data ─── */
-
 const slides = [
-  // 0 — Hero
   {
     id: "hero",
     render: () => (
-      <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-6">
+      <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
         <div className="flex items-center gap-2">
           <Leaf className="w-8 h-8 text-primary" />
           <span className="text-3xl font-black">
@@ -21,20 +18,20 @@ const slides = [
         </div>
         <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm font-bold text-secondary-foreground">
           <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-          🇰🇿 Эко-стартап из Казахстана
+          🇰🇿 Қазақстандық эко-стартап
         </div>
-        <h1 className="text-3xl md:text-5xl font-black leading-tight text-foreground">
-          Экология через <span className="text-primary">игру</span><br />
-          для детей <span className="text-accent">Казахстана</span>
+        <h1 className="text-2xl md:text-4xl font-black leading-tight text-foreground">
+          Экология <span className="text-primary">ойын</span> арқылы<br />
+          <span className="text-accent">Қазақстан</span> балаларына
         </h1>
-        <p className="text-muted-foreground max-w-md text-base">
-          Уроки, квесты, EcoGame и рейтинг школ — всё для того, чтобы дети полюбили заботу о природе.
+        <p className="text-muted-foreground max-w-md text-sm">
+          Сабақтар, квесттер, EcoGame және мектеп рейтингі — балалардың табиғатты сүюіне арналған.
         </p>
         <div className="flex gap-6 pt-2">
           {[
-            { v: "Kids+Teen", l: "Два режима" },
-            { v: "1-11", l: "Все классы" },
-            { v: "RU+KZ", l: "Два языка" },
+            { v: "Kids+Teen", l: "Екі режим" },
+            { v: "1-11", l: "Барлық сынып" },
+            { v: "RU+KZ", l: "Екі тіл" },
           ].map((s) => (
             <div key={s.v} className="text-center">
               <div className="text-lg font-black text-accent">{s.v}</div>
@@ -45,22 +42,21 @@ const slides = [
       </div>
     ),
   },
-  // 1 — О проекте
   {
     id: "about",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
-        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">О НАС</span>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">Кто мы такие?</h2>
+        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">БІЗ ТУРАЛЫ</span>
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">Біз кімбіз?</h2>
         <p className="text-muted-foreground max-w-lg text-sm">
-          EcoBala — стартап из Хромтау. Мы создаём цифровую платформу экологического образования для детей и подростков.
+          EcoBala — Хромтаудан шыққан стартап. Балалар мен жасөспірімдерге арналған экологиялық білім беру платформасы.
         </p>
         <div className="grid grid-cols-2 gap-3 max-w-sm w-full">
           {[
-            { icon: "🎓", title: "Уроки", desc: "Видео с тестами" },
-            { icon: "🗺️", title: "Квесты", desc: "Реальные задания" },
-            { icon: "🎮", title: "Игры", desc: "EcoGame-викторины" },
-            { icon: "🤖", title: "Чат-бот", desc: "Хомяк-помощник" },
+            { icon: "🎓", title: "Сабақтар", desc: "Бейне + тесттер" },
+            { icon: "🗺️", title: "Квесттер", desc: "Нақты тапсырмалар" },
+            { icon: "🎮", title: "Ойындар", desc: "EcoGame-викторина" },
+            { icon: "🤖", title: "Чат-бот", desc: "Хомяк-көмекші" },
           ].map((c) => (
             <div key={c.title} className="bg-card rounded-xl p-4 shadow-eco border border-border text-left">
               <div className="text-2xl mb-1">{c.icon}</div>
@@ -69,33 +65,27 @@ const slides = [
             </div>
           ))}
         </div>
-        <div className="flex gap-2">
-          <span className="bg-eco-kids/15 text-eco-kids font-bold text-xs px-3 py-1.5 rounded-full">Kids</span>
-          <span className="bg-eco-teen/15 text-eco-teen font-bold text-xs px-3 py-1.5 rounded-full">Teen</span>
-          <span className="bg-primary/10 text-primary font-bold text-xs px-3 py-1.5 rounded-full">Учитель</span>
-        </div>
       </div>
     ),
   },
-  // 2 — Kids
   {
     id: "kids",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
         <div className="inline-flex items-center gap-2 rounded-full kids-gradient text-primary-foreground px-4 py-2 text-sm font-bold">
-          <Gamepad2 className="w-4 h-4" /> 6–12 лет
+          <Gamepad2 className="w-4 h-4" /> 6–12 жас
         </div>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">
           EcoBala <span className="text-eco-kids">Kids</span>
         </h2>
         <p className="text-muted-foreground max-w-md text-sm">
-          Игровая платформа для детей. Интерактивные уроки с видео, тесты, значки и рейтинг — на русском и казахском.
+          Балаларға арналған ойын платформасы. Бейне-сабақтар, тесттер, белгілер — қазақша және орысша.
         </p>
         <div className="space-y-3 max-w-sm w-full text-left">
           {[
-            { icon: BookOpen, text: "Видео-уроки с конспектами" },
-            { icon: Trophy, text: "Бейджи, Eco Points и уровни 🌱🌿🌳" },
-            { icon: Gamepad2, text: "EcoGame — викторина в реальном времени" },
+            { icon: BookOpen, text: "Бейне-сабақтар конспектілермен" },
+            { icon: Trophy, text: "Белгілер, Eco Points, деңгейлер 🌱🌿🌳" },
+            { icon: Gamepad2, text: "EcoGame — нақты уақыттағы викторина" },
           ].map((item) => (
             <div key={item.text} className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-eco-kids/10 flex items-center justify-center flex-shrink-0">
@@ -105,42 +95,27 @@ const slides = [
             </div>
           ))}
         </div>
-        {/* Mini profile card */}
-        <div className="bg-card rounded-2xl p-5 shadow-eco-card border border-border max-w-xs w-full">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xl">🐣</div>
-            <div className="text-left">
-              <div className="font-bold text-card-foreground text-sm">Алия К.</div>
-              <div className="text-xs text-muted-foreground">Kids • 4 класс</div>
-            </div>
-            <div className="ml-auto bg-secondary text-xs font-bold px-2 py-1 rounded-full text-secondary-foreground">🌿 Ур.5</div>
-          </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <div className="h-full eco-gradient rounded-full" style={{ width: "72%" }} />
-          </div>
-        </div>
       </div>
     ),
   },
-  // 3 — Teen
   {
     id: "teen",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
         <div className="inline-flex items-center gap-2 rounded-full teen-gradient text-primary-foreground px-4 py-2 text-sm font-bold">
-          <Target className="w-4 h-4" /> 13–18 лет
+          <Target className="w-4 h-4" /> 13–18 жас
         </div>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">
           EcoBala <span className="text-eco-teen">Teen</span>
         </h2>
         <p className="text-muted-foreground max-w-md text-sm">
-          Реальные квесты: субботники, посадка деревьев, помощь приютам. Фото-отчёты и рейтинг школ.
+          Нақты квесттер: сенбіліктер, ағаш отырғызу, баспаналарға көмек. Фото-есептер және мектеп рейтингі.
         </p>
         <div className="space-y-3 max-w-sm w-full text-left">
           {[
-            { icon: Target, text: "Реальные эко-квесты и челленджи" },
-            { icon: Camera, text: "Фото-отчёты с верификацией" },
-            { icon: BarChart3, text: "Рейтинг школ по Казахстану" },
+            { icon: Target, text: "Нақты эко-квесттер мен челлендждер" },
+            { icon: Camera, text: "Фото-есептер верификациямен" },
+            { icon: BarChart3, text: "Қазақстан бойынша мектеп рейтингі" },
           ].map((item) => (
             <div key={item.text} className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg bg-eco-teen/10 flex items-center justify-center flex-shrink-0">
@@ -153,19 +128,18 @@ const slides = [
       </div>
     ),
   },
-  // 4 — Геймификация
   {
     id: "gamification",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
         <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">ECO-REWARD</span>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">Геймификация</h2>
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">Геймификация</h2>
         <div className="grid grid-cols-2 gap-3 max-w-sm w-full">
           {[
-            { Icon: Flame, label: "Streak", value: "Как Duolingo", desc: "Ежедневные бонусы" },
-            { Icon: Star, label: "XP", value: "Опыт за дела", desc: "Растущий аватар" },
-            { Icon: Award, label: "Бейджи", value: "Коллекция", desc: "Мастер переработки" },
-            { Icon: Map, label: "Карта", value: "Казахстан", desc: "Субботники, школы" },
+            { Icon: Flame, label: "Streak", value: "Күнделікті", desc: "Бонустар жина" },
+            { Icon: Star, label: "XP", value: "Тәжірибе", desc: "Аватар өсіру" },
+            { Icon: Award, label: "Белгілер", value: "Коллекция", desc: "Қайта өңдеу шебері" },
+            { Icon: Map, label: "Карта", value: "Қазақстан", desc: "Сенбіліктер, мектеп" },
           ].map((s) => (
             <div key={s.label} className="bg-card rounded-xl p-4 shadow-eco border border-border">
               <div className="eco-gradient w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2">
@@ -180,23 +154,22 @@ const slides = [
       </div>
     ),
   },
-  // 5 — Как это работает
   {
     id: "how",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
-        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">КАК ЭТО РАБОТАЕТ</span>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">Три простых шага</h2>
+        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">ҚАЛАЙ ЖҰМЫС ІСТЕЙДІ</span>
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">Үш қарапайым қадам</h2>
         <div className="space-y-4 max-w-sm w-full">
           {[
-            { num: "1", icon: "📝", title: "Регистрация", desc: "Создай аккаунт в Kids или Teen за 2 минуты" },
-            { num: "2", icon: "🎮", title: "Учись и играй", desc: "Проходи уроки, квесты, играй в EcoGame" },
-            { num: "3", icon: "🏆", title: "Расти и побеждай", desc: "Зарабатывай Eco Points, получай значки" },
+            { num: "1", icon: "📝", title: "Тіркелу", desc: "Kids немесе Teen-де 2 минутта аккаунт жаса" },
+            { num: "2", icon: "🎮", title: "Оқы және ойна", desc: "Сабақтар, квесттер, EcoGame ойна" },
+            { num: "3", icon: "🏆", title: "Өс және жең", desc: "Eco Points жина, белгілер ал" },
           ].map((s) => (
             <div key={s.num} className="flex items-center gap-4 bg-card rounded-xl p-4 shadow-eco border border-border text-left">
               <div className="w-12 h-12 eco-gradient rounded-xl flex items-center justify-center text-2xl flex-shrink-0">{s.icon}</div>
               <div>
-                <div className="text-xs font-extrabold text-primary uppercase">Шаг {s.num}</div>
+                <div className="text-xs font-extrabold text-primary uppercase">{s.num}-қадам</div>
                 <div className="text-sm font-black text-foreground">{s.title}</div>
                 <div className="text-xs text-muted-foreground">{s.desc}</div>
               </div>
@@ -206,18 +179,17 @@ const slides = [
       </div>
     ),
   },
-  // 6 — Отзывы
   {
     id: "reviews",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
-        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">ОТЗЫВЫ</span>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">Что говорят</h2>
+        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">ПІКІРЛЕР</span>
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">Не айтады</h2>
         <div className="space-y-3 max-w-sm w-full">
           {[
-            { name: "Мұқтар С.", role: "Teen, 16 лет", text: "EcoBala — это то, чего не хватало! 8 квестов, посадил деревья. Школа в топ-3!" },
-            { name: "Ергали Р.", role: "Teen, 15 лет", text: "Квесты мотивируют! Eco Points копятся быстро, уже 4-й уровень." },
-            { name: "Нурмухан А.", role: "Teen", text: "12 квестов и значок «Эко-герой». EcoBala меняет отношение к природе!" },
+            { name: "Мұқтар С.", role: "Teen, 16 жас", text: "EcoBala — керегі сол! 8 квест, ағаш отырғыздым. Мектеп топ-3-те!" },
+            { name: "Ергали Р.", role: "Teen, 15 жас", text: "Квесттер ынталандырады! Eco Points тез жиналады, 4-деңгей!" },
+            { name: "Нұрмұхан А.", role: "Teen", text: "12 квест және «Эко-батыр» белгісі. EcoBala табиғатқа көзқарасты өзгертеді!" },
           ].map((r) => (
             <div key={r.name} className="bg-card rounded-xl p-4 shadow-eco border border-border text-left">
               <div className="flex gap-0.5 mb-2">
@@ -239,18 +211,17 @@ const slides = [
       </div>
     ),
   },
-  // 7 — Контакты
   {
     id: "contacts",
     render: () => (
       <div className="flex flex-col items-center justify-center h-full px-6 text-center space-y-5">
-        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">КОНТАКТЫ</span>
-        <h2 className="text-2xl md:text-4xl font-black text-foreground">Свяжитесь с нами</h2>
+        <span className="text-xs font-extrabold tracking-[3px] uppercase text-primary">БАЙЛАНЫС</span>
+        <h2 className="text-2xl md:text-3xl font-black text-foreground">Бізбен байланысыңыз</h2>
         <div className="space-y-3 max-w-sm w-full">
           {[
             { Icon: Mail, label: "Email", value: "ecobala.kz@gmail.com" },
             { Icon: Phone, label: "Telegram", value: "@Ecobalabot" },
-            { Icon: MapPin, label: "Адрес", value: "Хромтау, Казахстан" },
+            { Icon: MapPin, label: "Мекенжай", value: "Хромтау, Қазақстан" },
           ].map((c) => (
             <div key={c.label} className="flex items-center gap-3 bg-card rounded-xl p-4 shadow-eco border border-border text-left">
               <div className="w-10 h-10 rounded-lg eco-gradient flex items-center justify-center flex-shrink-0">
@@ -287,7 +258,6 @@ const LandingCarousel = ({ onEnd }: Props) => {
   const [current, setCurrent] = useState(0);
   const total = slides.length;
   const touchStart = useRef(0);
-  const touchDelta = useRef(0);
 
   const go = useCallback((dir: number) => {
     const next = current + dir;
@@ -301,14 +271,14 @@ const LandingCarousel = ({ onEnd }: Props) => {
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStart.current = e.touches[0].clientX;
   };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
-    touchDelta.current = touchStart.current - e.changedTouches[0].clientX;
-    if (Math.abs(touchDelta.current) > 50) {
-      go(touchDelta.current > 0 ? 1 : -1);
+    const delta = touchStart.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 50) {
+      go(delta > 0 ? 1 : -1);
     }
   };
 
-  // Keyboard
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") go(1);
@@ -318,17 +288,15 @@ const LandingCarousel = ({ onEnd }: Props) => {
     return () => window.removeEventListener("keydown", handler);
   }, [go]);
 
-  
-
   return (
     <div
       className="h-[100dvh] w-full overflow-hidden relative bg-gradient-to-b from-[hsl(195,80%,88%)] via-[hsl(150,50%,94%)] to-background select-none"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Slide content */}
+      {/* Slides */}
       <div
-        className="flex h-full transition-transform duration-500 ease-out"
+        className="flex h-full transition-transform duration-500 ease-out will-change-transform"
         style={{ transform: `translateX(-${current * 100}%)`, width: `${total * 100}%` }}
       >
         {slides.map((slide) => (
@@ -338,42 +306,50 @@ const LandingCarousel = ({ onEnd }: Props) => {
         ))}
       </div>
 
-      {/* Arrows */}
+      {/* Left arrow */}
       {current > 0 && (
         <button
-          onClick={() => go(-1)}
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border shadow-eco flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors z-20"
+          type="button"
+          onClick={(e) => { e.stopPropagation(); go(-1); }}
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border shadow-eco flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors z-30 cursor-pointer"
+          aria-label="Алдыңғы"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5 pointer-events-none" />
         </button>
       )}
+
+      {/* Right arrow */}
       <button
-        onClick={() => go(1)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border shadow-eco flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors z-20"
+        type="button"
+        onClick={(e) => { e.stopPropagation(); go(1); }}
+        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border shadow-eco flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground transition-colors z-30 cursor-pointer"
+        aria-label="Келесі"
       >
-        <ChevronRight className="w-5 h-5" />
+        <ChevronRight className="w-5 h-5 pointer-events-none" />
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-30">
         {slides.map((_, i) => (
           <button
+            type="button"
             key={i}
             onClick={() => setCurrent(i)}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
               i === current ? "bg-primary w-6" : "bg-muted-foreground/30"
             }`}
           />
         ))}
       </div>
 
-      {/* Skip / CTA on last slide */}
+      {/* CTA on last slide */}
       {current === total - 1 && (
         <button
+          type="button"
           onClick={onEnd}
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 eco-gradient text-primary-foreground px-8 py-3 rounded-full font-bold text-sm shadow-eco hover:scale-105 transition-transform z-20"
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 eco-gradient text-primary-foreground px-8 py-3 rounded-full font-bold text-sm shadow-eco hover:scale-105 transition-transform z-30 cursor-pointer"
         >
-          Начать →
+          Бастау →
         </button>
       )}
     </div>

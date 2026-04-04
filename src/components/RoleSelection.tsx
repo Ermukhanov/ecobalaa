@@ -8,8 +8,8 @@ const roles = [
   {
     id: "kids",
     label: "EcoBala Kids",
-    age: "6–12 лет",
-    desc: "Уроки, игры, значки",
+    age: "6–12 жас",
+    desc: "Сабақтар, ойындар, белгілер",
     Icon: Gamepad2,
     gradient: "kids-gradient",
     emoji: "🐣",
@@ -17,17 +17,17 @@ const roles = [
   {
     id: "teen",
     label: "EcoBala Teen",
-    age: "13–18 лет",
-    desc: "Квесты, отчёты, рейтинг",
+    age: "13–18 жас",
+    desc: "Квесттер, есептер, рейтинг",
     Icon: Target,
     gradient: "teen-gradient",
     emoji: "🌿",
   },
   {
     id: "teacher",
-    label: "Учитель",
-    age: "Панель учителя",
-    desc: "EcoGame, комнаты, медали",
+    label: "Мұғалім",
+    age: "Мұғалім панелі",
+    desc: "EcoGame, бөлмелер, медальдар",
     Icon: GraduationCap,
     gradient: "eco-gradient",
     emoji: "👨‍🏫",
@@ -36,8 +36,8 @@ const roles = [
 
 const RoleSelection = ({ onSelect }: Props) => (
   <div className="h-[100dvh] w-full bg-gradient-to-b from-[hsl(195,80%,88%)] via-[hsl(150,50%,94%)] to-background flex flex-col items-center justify-center px-6">
-    <h2 className="text-2xl md:text-4xl font-black text-foreground mb-2 text-center">Выберите роль</h2>
-    <p className="text-muted-foreground text-sm mb-8 text-center">Кто вы в EcoBala?</p>
+    <h2 className="text-2xl md:text-4xl font-black text-foreground mb-2 text-center">Рөлді таңдаңыз</h2>
+    <p className="text-muted-foreground text-sm mb-8 text-center">EcoBala-да сіз кімсіз?</p>
 
     <div className="space-y-4 max-w-sm w-full">
       {roles.map((r) => (
