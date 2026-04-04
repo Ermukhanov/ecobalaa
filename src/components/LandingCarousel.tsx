@@ -318,7 +318,7 @@ const LandingCarousel = ({ onEnd }: Props) => {
     return () => window.removeEventListener("keydown", handler);
   }, [go]);
 
-  const useCallback_ = useCallback;
+  
 
   return (
     <div
