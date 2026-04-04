@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Leaf, Sprout, BookOpen, Trophy, Gamepad2, Target, Camera, BarChart3, Flame, Star, Award, Map, Mail, MapPin, Phone } from "lucide-react";
 
 interface Props {
