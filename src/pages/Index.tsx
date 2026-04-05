@@ -1,16 +1,18 @@
 import { useState, useCallback } from "react";
 import SplashScreen from "@/components/SplashScreen";
+import LanguageSelect from "@/components/LanguageSelect";
 import LandingCarousel from "@/components/LandingCarousel";
 import RoleSelection from "@/components/RoleSelection";
 import Onboarding from "@/components/Onboarding";
 
-type Screen = "splash" | "landing" | "roles" | "onboarding";
+type Screen = "splash" | "lang" | "landing" | "roles" | "onboarding";
 
 const Index = () => {
   const [screen, setScreen] = useState<Screen>("splash");
   const [role, setRole] = useState("");
 
-  const handleSplashEnd = useCallback(() => setScreen("landing"), []);
+  const handleSplashEnd = useCallback(() => setScreen("lang"), []);
+  const handleLangDone = useCallback(() => setScreen("landing"), []);
   const handleLandingEnd = useCallback(() => setScreen("roles"), []);
   const handleRoleSelect = useCallback((r: string) => {
     setRole(r);
@@ -18,6 +20,7 @@ const Index = () => {
   }, []);
 
   if (screen === "splash") return <SplashScreen onFinish={handleSplashEnd} />;
+  if (screen === "lang") return <LanguageSelect onDone={handleLangDone} />;
   if (screen === "onboarding") return <Onboarding role={role} />;
   if (screen === "roles") return <RoleSelection onSelect={handleRoleSelect} />;
   return <LandingCarousel onEnd={handleLandingEnd} />;
