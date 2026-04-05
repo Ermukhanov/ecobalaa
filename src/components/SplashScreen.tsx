@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Leaf } from "lucide-react";
+import logoMain from "@/assets/logo-main.jpg";
 
 interface Props {
   onFinish: () => void;
@@ -64,15 +64,13 @@ const SplashScreen = ({ onFinish }: Props) => {
         {/* Icon */}
         <div className="relative">
           <div
-            className="w-24 h-24 rounded-3xl flex items-center justify-center shadow-2xl"
+            className="w-28 h-28 rounded-3xl flex items-center justify-center shadow-2xl overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, hsl(145 63% 45%), hsl(170 60% 40%))",
               boxShadow: "0 0 60px hsl(145 63% 42% / 0.4), 0 20px 40px hsl(0 0% 0% / 0.3)",
             }}
           >
-            <Leaf className="w-12 h-12 text-white" strokeWidth={2.5} />
+            <img src={logoMain} alt="EcoBala" className="w-full h-full object-cover" />
           </div>
-          {/* Pulse ring */}
           <div
             className="absolute -inset-3 rounded-[28px] border-2 border-primary/30"
             style={{ animation: "pulseRing 2s ease-out infinite" }}
