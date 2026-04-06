@@ -1,56 +1,23 @@
 import { useState } from "react";
-import { ChevronRight, Globe, Megaphone, Sparkles } from "lucide-react";
+import { ChevronRight, Megaphone, Sparkles } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   role: string;
 }
 
-const languages = [
-  { id: "kz", label: "Қазақша", flag: "🇰🇿" },
-  { id: "ru", label: "Русский", flag: "🇷🇺" },
-];
-
-const sources = [
-  { id: "social", label: "Әлеуметтік желілер", icon: "📱" },
-  { id: "friend", label: "Достар", icon: "👫" },
-  { id: "school", label: "Мектеп / мұғалім", icon: "🏫" },
-  { id: "search", label: "Интернеттен іздеу", icon: "🔍" },
-  { id: "other", label: "Басқа", icon: "💬" },
-];
-
-const awaits: Record<string, { icon: string; text: string }[]> = {
-  kids: [
-    { icon: "🎥", text: "Қазақша және орысша бейне-сабақтар" },
-    { icon: "🎮", text: "EcoGame — сыныппен нақты уақытта викторина" },
-    { icon: "🏆", text: "Белгілер, Eco Points және деңгейлер 🌱🌿🌳" },
-    { icon: "🐹", text: "Хомяк чат-бот — эко-көмекшің" },
-  ],
-  teen: [
-    { icon: "🗺️", text: "Нақты квесттер: сенбіліктер, ағаш отырғызу" },
-    { icon: "📸", text: "Фото-есептер және тапсырмаларды тексеру" },
-    { icon: "📊", text: "Қазақстан бойынша мектеп рейтингі" },
-    { icon: "🔥", text: "Streak жүйесі — күнделікті бонустар" },
-  ],
-  teacher: [
-    { icon: "🎮", text: "EcoGame — викторинаға бөлмелер жасаңыз" },
-    { icon: "📋", text: "Сыныптар мен оқушыларды басқару панелі" },
-    { icon: "🏅", text: "Автоматты есептеу, медальдар, подиум" },
-    { icon: "📺", text: "Интерактивті тақтада / проекторда ойын" },
-  ],
-};
-
-const steps = [
-  { id: "lang", title: "Тілді таңдаңыз", Icon: Globe },
-  { id: "source", title: "Біз туралы қайдан білдіңіз?", Icon: Megaphone },
-  { id: "awaits", title: "Сізді не күтеді", Icon: Sparkles },
-];
-
 const Onboarding = ({ role }: Props) => {
+  const { t } = useI18n();
   const [step, setStep] = useState(0);
-  const [lang, setLang] = useState("");
   const [source, setSource] = useState("");
 
-  const canNext = step === 0 ? !!lang : step === 1 ? !!source : true;
+  const sources = [
+    { id: "social", label: t("sourceSocial"), icon: "📱" },
+    { id: "friend", label: t("sourceFriend"), icon: "👫" },
+    { id: "school", label: t("sourceSchool"), icon: "🏫" },
+    { id: "search", label: t("sourceSearch"), icon: "🔍" },
+    { id: "other", label: t("sourceOther"), icon: "💬" },
+  ];
 
   const getAuthUrl = () => {
     if (role === "kids") return "/register-kids.html";
@@ -58,16 +25,43 @@ const Onboarding = ({ role }: Props) => {
     return "/register.html";
   };
 
+  const awaitsMap: Record<string, { icon: string; text: string }[]> = {
+    kids: [
+      { icon: "🎥", text: t("awaitsKids1") },
+      { icon: "🎮", text: t("awaitsKids2") },
+      { icon: "🏆", text: t("awaitsKids3") },
+      { icon: "🐹", text: t("awaitsKids4") },
+    ],
+    teen: [
+      { icon: "🗺️", text: t("awaitsTeen1") },
+      { icon: "📸", text: t("awaitsTeen2") },
+      { icon: "📊", text: t("awaitsTeen3") },
+      { icon: "🔥", text: t("awaitsTeen4") },
+    ],
+    teacher: [
+      { icon: "🎮", text: t("awaitsTeacher1") },
+      { icon: "📋", text: t("awaitsTeacher2") },
+      { icon: "🏅", text: t("awaitsTeacher3") },
+      { icon: "📺", text: t("awaitsTeacher4") },
+    ],
+  };
+
   const next = () => {
-    if (step < 2) {
+    if (step < 1) {
       setStep(step + 1);
     } else {
       window.location.href = getAuthUrl();
     }
-  };
+
+  const steps = [
+    { id: "source", title: t("sourceTitle"), Icon: Megaphone },
+    { id: "awaits", title: t("awaitsTitle"), Icon: Sparkles },
+  ];
+
+  const canNext = step === 0 ? !!source : true;
 
   return (
-    <div className="h-[100dvh] w-full bg-gradient-to-b from-[hsl(195,80%,88%)] via-[hsl(150,50%,94%)] to-background flex flex-col">
+    <div className="h-[100dvh] w-full bg-gradient-to-b from-[hsl(150,50%,94%)] via-background to-background flex flex-col">
       <div className="pt-6 px-6">
         <div className="flex gap-2 max-w-sm mx-auto">
           {steps.map((_, i) => (
@@ -77,58 +71,44 @@ const Onboarding = ({ role }: Props) => {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="mb-2">
+        <div className="mb-2 animate-fade-in">
           {(() => {
             const StepIcon = steps[step].Icon;
-            return <StepIcon className="w-8 h-8 text-primary" />;
+            return <StepIcon className="w-7 h-7 text-primary" />;
           })()}
         </div>
-        <h2 className="text-2xl md:text-3xl font-black text-foreground mb-6 text-center">{steps[step].title}</h2>
+        <h2 className="text-xl font-black text-foreground mb-5 text-center animate-fade-in">{steps[step].title}</h2>
 
         {step === 0 && (
-          <div className="space-y-3 max-w-sm w-full">
-            {languages.map((l) => (
-              <button
-                key={l.id}
-                onClick={() => setLang(l.id)}
-                className={`w-full flex items-center gap-4 rounded-2xl p-5 border-2 transition-all text-left ${
-                  lang === l.id
-                    ? "border-primary bg-primary/5 shadow-eco"
-                    : "border-border bg-card hover:border-primary/30"
-                }`}
-              >
-                <span className="text-3xl">{l.flag}</span>
-                <span className="font-bold text-foreground text-lg">{l.label}</span>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {step === 1 && (
           <div className="space-y-2 max-w-sm w-full">
-            {sources.map((s) => (
+            {sources.map((s, i) => (
               <button
                 key={s.id}
                 onClick={() => setSource(s.id)}
-                className={`w-full flex items-center gap-3 rounded-xl p-4 border-2 transition-all text-left ${
+                className={`w-full flex items-center gap-3 rounded-xl p-3 border-2 transition-all text-left animate-fade-in ${
                   source === s.id
                     ? "border-primary bg-primary/5 shadow-eco"
                     : "border-border bg-card hover:border-primary/30"
                 }`}
+                style={{ animationDelay: `${i * 0.05}s`, animationFillMode: "backwards" }}
               >
-                <span className="text-xl">{s.icon}</span>
+                <span className="text-lg">{s.icon}</span>
                 <span className="font-semibold text-foreground text-sm">{s.label}</span>
               </button>
             ))}
           </div>
         )}
 
-        {step === 2 && (
-          <div className="space-y-3 max-w-sm w-full">
-            {(awaits[role] || awaits.kids).map((item, i) => (
-              <div key={i} className="flex items-center gap-3 bg-card rounded-xl p-4 shadow-eco border border-border">
-                <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                <span className="text-sm font-semibold text-foreground">{item.text}</span>
+        {step === 1 && (
+          <div className="space-y-2.5 max-w-sm w-full">
+            {(awaitsMap[role] || awaitsMap.kids).map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 bg-card rounded-xl p-3 shadow-eco border border-border animate-fade-in"
+                style={{ animationDelay: `${i * 0.08}s`, animationFillMode: "backwards" }}
+              >
+                <span className="text-xl flex-shrink-0">{item.icon}</span>
+                <span className="text-xs font-semibold text-foreground">{item.text}</span>
               </div>
             ))}
           </div>
@@ -139,10 +119,10 @@ const Onboarding = ({ role }: Props) => {
         <button
           onClick={next}
           disabled={!canNext}
-          className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 eco-gradient text-primary-foreground py-4 rounded-full font-bold text-base shadow-eco hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:hover:scale-100"
+          className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 eco-gradient text-primary-foreground py-3.5 rounded-full font-bold text-sm shadow-eco hover:scale-[1.02] transition-transform disabled:opacity-40 disabled:hover:scale-100"
         >
-          {step < 2 ? "Келесі" : "Кіру / Тіркелу"}
-          <ChevronRight className="w-5 h-5" />
+          {step < 1 ? t("next") : t("loginBtn")}
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
