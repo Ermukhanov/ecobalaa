@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoGame — Учительская панель</title>
+<link rel="icon" href="iconca.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase2.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g:#1B5E20;--gm:#2E7D32;--gl:#4CAF50;--gs:#81C784;
+  --bg:#F0FBF0;--card:#fff;--border:#C8E6C9;
+  --text:#0f172a;--muted:#64748b;--red:#C62828;
+  --yellow:#F59E0B;--blue:#1565C0;
+}
+body{font-family:'Nunito','Noto Sans',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);}
+
+/* ── TOP BAR ── */
+.topbar{background:#fff;border-bottom:2px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(46,125,50,0.08);}
+.tb-left{display:flex;align-items:center;gap:12px;}
+.tb-logo{width:36px;height:36px;border-radius:10px;object-fit:cover;}
+.tb-brand{font-size:18px;font-weight:900;color:var(--g);}
+.tb-badge{background:linear-gradient(135deg,#1B5E20,#4CAF50);color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:900;letter-spacing:0.5px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.lsw{display:flex;background:#E8F5E9;border-radius:20px;padding:3px;}
+.lb{padding:4px 12px;border-radius:17px;border:none;background:transparent;font-family:'Nunito';font-size:11px;font-weight:800;cursor:pointer;color:var(--g);}
+.lb.on{background:var(--gm);color:#fff;}
+.back-btn{padding:8px 16px;border-radius:12px;background:#F1F8F2;border:1.5px solid var(--border);color:var(--g);font-family:'Nunito';font-size:13px;font-weight:800;cursor:pointer;text-decoration:none;}
+
+/* ── MAIN LAYOUT ── */
+.main{max-width:960px;margin:0 auto;padding:24px 16px;}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ── PAGE TITLE ── */
+.pg-title{font-size:26px;font-weight:900;color:var(--g);margin-bottom:4px;}
+.pg-sub{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:24px;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:20px;border:1.5px solid var(--border);box-shadow:0 4px 20px rgba(46,125,50,0.07);padding:24px;}
+.card+.card{margin-top:16px;}
+
+/* ── FORM ELEMENTS ── */
+.fg{margin-bottom:16px;}
+.fl{display:block;font-size:13px;font-weight:800;color:var(--text);margin-bottom:7px;}
+.fi{width:100%;padding:11px 14px;border-radius:12px;border:2px solid #e2e8f0;font-family:'Nunito';font-size:14px;font-weight:600;color:var(--text);background:#f8fafc;outline:none;transition:all .2s;}
+.fi:focus{border-color:var(--gl);background:#fff;box-shadow:0 0 0 3px rgba(76,175,80,0.12);}
+select.fi{cursor:pointer;}
+.fi-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── BUTTONS ── */
+.btn{padding:12px 22px;border-radius:13px;border:none;font-family:'Nunito';font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn:hover{transform:translateY(-1px);}
+.btn-primary{background:linear-gradient(135deg,var(--gm),var(--gl));color:#fff;box-shadow:0 4px 14px rgba(76,175,80,0.3);}
+.btn-secondary{background:#F1F8F2;border:1.5px solid var(--border);color:var(--g);}
+.btn-danger{background:#FFEBEE;border:1.5px solid #FFCDD2;color:var(--red);}
+.btn-yellow{background:linear-gradient(135deg,#F59E0B,#FCD34D);color:#fff;box-shadow:0 4px 14px rgba(245,158,11,0.3);}
+.btn-full{width:100%;justify-content:center;}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:10px;}
+
+/* ── QUESTION BUILDER ── */
+.q-list{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.q-item{background:#FAFFFE;border:1.5px solid var(--border);border-radius:16px;padding:16px;position:relative;}
+.q-item-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.q-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gm),var(--gl));color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.q-title{font-size:14px;font-weight:800;flex:1;color:var(--text);}
+.q-del{background:none;border:none;cursor:pointer;font-size:18px;color:#ef4444;padding:4px;border-radius:8px;}
+.q-del:hover{background:#FFEBEE;}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.opt-row{display:flex;align-items:center;gap:8px;}
+.opt-check{width:20px;height:20px;cursor:pointer;accent-color:var(--gl);}
+.opt-colors{--c0:#e74c3c;--c1:#3498db;--c2:#f39c12;--c3:#27ae60;}
+.opt-row:nth-child(1) .opt-label{color:var(--c0);}
+.opt-row:nth-child(2) .opt-label{color:var(--c1);}
+.opt-row:nth-child(3) .opt-label{color:var(--c2);}
+.opt-row:nth-child(4) .opt-label{color:var(--c3);}
+.opt-label{font-size:12px;font-weight:800;width:20px;flex-shrink:0;}
+.opt-input{flex:1;padding:8px 12px;border-radius:10px;border:2px solid #e2e8f0;font-family:'Nunito';font-size:13px;font-weight:600;outline:none;transition:all .2s;}
+.opt-input:focus{border-color:var(--gl);box-shadow:0 0 0 2px rgba(76,175,80,0.1);}
+.time-row{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.time-label{font-size:12px;font-weight:800;color:var(--muted);}
+.time-btns{display:flex;gap:6px;}
+.tbtn{padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito';font-size:12px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .2s;}
+.tbtn.on{background:var(--gm);color:#fff;border-color:var(--gm);}
+.media-row{margin-top:10px;}
+.media-inp{width:100%;padding:8px 12px;border-radius:10px;border:2px solid #e2e8f0;font-family:'Nunito';font-size:13px;outline:none;}
+
+/* ── ROOM CODE + QR ── */
+.room-hero{background:linear-gradient(160deg,#1B5E20,#2E7D32,#388E3C);border-radius:24px;padding:32px;text-align:center;color:#fff;position:relative;overflow:hidden;margin-bottom:20px;}
+.room-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:rgba(255,255,255,.07);border-radius:50%;}
+.room-hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:150px;height:150px;background:rgba(255,255,255,.05);border-radius:50%;}
+.room-code-label{font-size:13px;font-weight:800;opacity:.8;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;}
+.room-code{font-size:56px;font-weight:900;letter-spacing:8px;line-height:1;margin-bottom:4px;text-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.room-url{font-size:13px;opacity:.7;font-weight:600;}
+.qr-wrap{background:#fff;border-radius:16px;padding:14px;display:inline-block;margin:16px auto;box-shadow:0 4px 20px rgba(0,0,0,0.15);}
+
+/* ── LIVE DASHBOARD ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:#fff;border-radius:16px;border:1.5px solid var(--border);padding:16px;text-align:center;}
+.stat-num{font-size:32px;font-weight:900;color:var(--gm);}
+.stat-lbl{font-size:12px;font-weight:700;color:var(--muted);}
+.player-list{display:flex;flex-direction:column;gap:8px;}
+.player-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#F8FFFE;border-radius:14px;border:1.5px solid var(--border);transition:all .2s;}
+.player-row.online{border-color:#A5D6A7;}
+.player-row.offline{opacity:.55;}
+.player-emoji{font-size:22px;}
+.player-name{font-size:14px;font-weight:800;flex:1;}
+.player-score{font-size:16px;font-weight:900;color:var(--gm);}
+.player-status{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:700;}
+.player-status.on{background:#E8F5E9;color:#2E7D32;}
+.player-status.off{background:#f1f5f9;color:#94a3b8;}
+.rank-badge{width:24px;height:24px;border-radius:50%;background:#e2e8f0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
+.rank-badge.r1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;}
+.rank-badge.r2{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:#fff;}
+.rank-badge.r3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff;}
+
+/* ── QUESTION PROGRESS ── */
+.q-progress{background:#fff;border-radius:16px;border:1.5px solid var(--border);padding:16px;margin-bottom:16px;}
+.qp-bar-wrap{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:8px;}
+.qp-bar{height:100%;background:linear-gradient(90deg,var(--gm),var(--gl));border-radius:99px;transition:width .5s ease;}
+.qp-info{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+
+/* ── TIMER RING ── */
+.timer-big{width:80px;height:80px;margin:0 auto 16px;position:relative;}
+.timer-svg{transform:rotate(-90deg);}
+.timer-track{fill:none;stroke:#e2e8f0;stroke-width:6;}
+.timer-fill{fill:none;stroke:var(--gl);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .9s linear,stroke .3s;}
+.timer-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:900;color:var(--text);}
+
+/* ── CONTROL BUTTONS ── */
+.ctrl-row{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;}
+
+/* ── MSG TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1B5E20;color:#fff;padding:12px 20px;border-radius:14px;font-size:14px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,0.15);transform:translateY(80px);opacity:0;transition:all .3s;z-index:999;}
+.toast.show{transform:none;opacity:1;}
+
+/* ── LOADING ── */
+.loading{text-align:center;padding:40px;color:var(--muted);font-weight:700;}
+.sp{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gm);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .fi-row{grid-template-columns:1fr;}
+  .opts-grid{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .room-code{font-size:40px;letter-spacing:5px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-left">
+    <img src="iconca.jpg" class="tb-logo" alt="EcoBala">
+    <span class="tb-brand">EcoBala</span>
+    <span class="tb-badge">🎮 EcoGame</span>
+  </div>
+  <div class="tb-right">
+    <div class="lsw">
+      <button class="lb on" data-l="ru">РУС</button>
+      <button class="lb" data-l="kz">ҚАЗ</button>
+    </div>
+    <a href="teacher.html" class="back-btn">← <span id="tbBack">Панель</span></a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══ SCREEN 1: HOME — my rooms ══ -->
+  <div class="screen active" id="s-home">
+    <div class="pg-title" id="s1Title">🎮 EcoGame</div>
+    <div class="pg-sub" id="s1Sub">Интерактивные игры для учеников</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <span style="font-size:15px;font-weight:800;" id="myRoomsLbl">Мои игровые комнаты</span>
+        <button class="btn btn-primary" onclick="showScreen('s-create')">
+          ＋ <span id="createRoomLbl">Создать комнату</span>
+        </button>
+      </div>
+      <div id="roomsList">
+        <div class="loading"><div class="sp"></div><div id="loadingLbl">Загрузка...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: CREATE ROOM ══ -->
+  <div class="screen" id="s-create">
+    <div class="pg-title" id="s2Title">➕ Создать комнату</div>
+    <div class="pg-sub" id="s2Sub">Настройте игру для своих учеников</div>
+    <div class="card">
+      <div class="fg">
+        <label class="fl" id="titleLbl">Название игры</label>
+        <input class="fi" id="roomTitle" type="text" placeholder="Экология — Урок 5" maxlength="60">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="createRoom()" id="btnCreate">
+        🚀 <span id="createLbl">Создать и добавить вопросы</span>
+      </button>
+      <div style="margin-top:10px;">
+        <button class="btn btn-secondary btn-full" onclick="showScreen('s-home')">← <span id="cancelLbl">Отмена</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3: QUESTION BUILDER ══ -->
+  <div class="screen" id="s-build">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+      <button class="btn btn-secondary btn-sm" onclick="showScreen('s-home')">←</button>
+      <div class="pg-title" style="margin-bottom:0;" id="s3Title">📝 Вопросы</div>
+    </div>
+    <div class="pg-sub" id="s3Sub">Добавьте вопросы для игры</div>
+
+    <div class="card">
+      <div id="qList" class="q-list"></div>
+      <button class="btn btn-secondary btn-full" onclick="addQuestion()" id="addQBtn">＋ Добавить вопрос</button>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <button class="btn btn-primary btn-full" style="font-size:15px;padding:15px;" onclick="saveAndOpenRoom()" id="openRoomBtn">
+        🎯 <span id="openRoomLbl">Сохранить и открыть комнату</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 4: LOBBY — show code + QR ══ -->
+  <div class="screen" id="s-lobby">
+    <div class="room-hero">
+      <div class="room-code-label" id="joinCodeLbl">КОД ДЛЯ ВХОДА</div>
+      <div class="room-code" id="roomCodeDisplay">------</div>
+      <div class="room-url">ecobalakz.vercel.app/ecogame-join.html</div>
+      <div class="qr-wrap"><div id="qrcode"></div></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="statPlayers">0</div><div class="stat-lbl" id="statPlayersLbl">Игроков</div></div>
+      <div class="stat-card"><div class="stat-num" id="statQ">0</div><div class="stat-lbl" id="statQLbl">Вопросов</div></div>
+      <div class="stat-card"><div class="stat-num" id="statStatus">⏳</div><div class="stat-lbl" id="statStatusLbl">Статус</div></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:800;margin-bottom:12px;" id="waitingLbl">⏳ Ожидание игроков...</div>
+      <div id="lobbyPlayerList" class="player-list"></div>
+      <div class="ctrl-row">
+        <button class="btn btn-primary" style="flex:1;font-size:15px;padding:14px;" onclick="startGame()" id="startBtn">
+          ▶ <span id="startGameLbl">Начать игру</span>
+        </button>
+        <button class="btn btn-danger" onclick="deleteRoom()" id="deleteBtn">🗑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 5: LIVE GAME (teacher view) ══ -->
+  <div class="screen" id="s-game">
+    <div class="q-progress">
+      <div class="qp-info">
+        <span id="qProgressText">Вопрос 1 из 5</span>
+        <span id="qAnsweredText">0 ответили</span>
+      </div>
+      <div class="qp-bar-wrap"><div class="qp-bar" id="qpBar" style="width:20%"></div></div>
+    </div>
+
+    <div class="card" style="text-align:center;margin-bottom:16px;">
+      <div class="timer-big">
+        <svg class="timer-svg" width="80" height="80" viewBox="0 0 80 80">
+          <circle class="timer-track" cx="40" cy="40" r="34"/>
+          <circle class="timer-fill" id="timerCircle" cx="40" cy="40" r="34"
+            stroke-dasharray="213.6" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-num" id="timerNum">20</div>
+      </div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:8px;" id="currentQ">Загрузка вопроса...</div>
+      <div id="currentQMedia" style="margin:10px 0;"></div>
+      <div id="currentOpts" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:14px;font-weight:800;margin-bottom:12px;" id="liveRankLbl">📊 Рейтинг в реальном времени</div>
+      <div id="liveLeaderboard" class="player-list"></div>
+      <div class="ctrl-row">
+        <button class="btn btn-yellow" style="flex:1;" onclick="nextQuestion()" id="nextQBtn">Следующий вопрос ▶</button>
+        <button class="btn btn-danger btn-sm" onclick="endGame()" id="endGameBtn">⏹ Завершить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 6: RESULTS ══ -->
+  <div class="screen" id="s-results">
+    <div class="pg-title" id="s6Title">🏆 Результаты</div>
+    <div class="pg-sub" id="s6Sub">Итоги игры</div>
+    <div id="resultsContent"></div>
+    <div class="card" style="margin-top:16px;">
+      <button class="btn btn-primary btn-full" onclick="showScreen('s-home')" id="newGameBtn">🎮 Новая игра</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let currentRoom = null;
+let questions = [];
+let participants = [];
+let gameInterval = null;
+let timerInterval = null;
+let timeLeft = 0;
+let pollInterval = null;
+
+const EMOJIS = ['🌱','🌿','🍀','🌳','🦋','🐝','🌸','🌻','🦊','🐬','🌈','⭐'];
+
+// ══════════════════════════════════════════════
+//  TRANSLATIONS
+// ══════════════════════════════════════════════
+const T = {
+  ru:{
+    back:'Панель',s1Title:'🎮 EcoGame',s1Sub:'Интерактивные игры для учеников',
+    myRooms:'Мои игровые комнаты',createRoom:'Создать комнату',
+    s2Title:'➕ Создать комнату',s2Sub:'Настройте игру для своих учеников',
+    titleLbl:'Название игры',createLbl:'Создать и добавить вопросы',cancelLbl:'Отмена',
+    s3Title:'📝 Вопросы',s3Sub:'Добавьте вопросы для игры',addQ:'Добавить вопрос',
+    openRoom:'Сохранить и открыть комнату',
+    joinCode:'КОД ДЛЯ ВХОДА',waiting:'⏳ Ожидание игроков...',
+    statPlayers:'Игроков',statQ:'Вопросов',statStatus:'Статус',
+    startGame:'Начать игру',loading:'Загрузка...',
+    qProgressPre:'Вопрос',qProgressOf:'из',
+    answered:'ответили',liveRank:'📊 Рейтинг в реальном времени',
+    nextQ:'Следующий вопрос ▶',endGame:'⏹ Завершить',
+    s6Title:'🏆 Результаты',s6Sub:'Итоги игры',newGame:'🎮 Новая игра',
+    online:'онлайн',offline:'офлайн',pts:'очков',
+    noRooms:'Нет игровых комнат. Создайте первую!',
+    saved:'✅ Вопросы сохранены!',roomCreated:'✅ Комната создана!',
+    gameStarted:'🎮 Игра началась!',gameEnded:'🏁 Игра завершена!',
+    qType:'Тип вопроса',qText:'Вопрос',qMedia:'URL медиа (необязательно)',
+    optA:'Вариант A',optB:'Вариант B',optC:'Вариант C',optD:'Вариант D',
+    correct:'✓ Правильный',timeSec:'Время (сек)',
+    lobbySec:'Лобби',activeSec:'Активна',finSec:'Завершена',
+    open:'Открыть',delete:'Удалить',
+    badgePts:'Бонусных баллов в профиль',place1:'🥇 1-е место',place2:'🥈 2-е место',place3:'🥉 3-е место',
+  },
+  kz:{
+    back:'Панель',s1Title:'🎮 EcoGame',s1Sub:'Оқушыларға арналған интерактивті ойындар',
+    myRooms:'Менің ойын бөлмелерім',createRoom:'Бөлме жасау',
+    s2Title:'➕ Бөлме жасау',s2Sub:'Оқушылар үшін ойынды теңшеу',
+    titleLbl:'Ойын атауы',createLbl:'Жасау және сұрақтар қосу',cancelLbl:'Бас тарту',
+    s3Title:'📝 Сұрақтар',s3Sub:'Ойынға сұрақтар қосыңыз',addQ:'Сұрақ қосу',
+    openRoom:'Сақтап, бөлмені ашу',
+    joinCode:'КІРУ КОДЫ',waiting:'⏳ Ойыншылар күтілуде...',
+    statPlayers:'Ойыншылар',statQ:'Сұрақтар',statStatus:'Мәртебе',
+    startGame:'Ойынды бастау',loading:'Жүктелуде...',
+    qProgressPre:'Сұрақ',qProgressOf:'/',
+    answered:'жауап берді',liveRank:'📊 Нақты уақыт рейтингі',
+    nextQ:'Келесі сұрақ ▶',endGame:'⏹ Аяқтау',
+    s6Title:'🏆 Нәтижелер',s6Sub:'Ойын қорытындылары',newGame:'🎮 Жаңа ойын',
+    online:'онлайн',offline:'офлайн',pts:'ұпай',
+    noRooms:'Ойын бөлмелері жоқ. Бірінші бөлмені жасаңыз!',
+    saved:'✅ Сұрақтар сақталды!',roomCreated:'✅ Бөлме жасалды!',
+    gameStarted:'🎮 Ойын басталды!',gameEnded:'🏁 Ойын аяқталды!',
+    qType:'Сұрақ түрі',qText:'Сұрақ',qMedia:'Медиа URL (міндетті емес)',
+    optA:'A нұсқасы',optB:'B нұсқасы',optC:'C нұсқасы',optD:'D нұсқасы',
+    correct:'✓ Дұрыс',timeSec:'Уақыт (сек)',
+    lobbySec:'Лобби',activeSec:'Белсенді',finSec:'Аяқталды',
+    open:'Ашу',delete:'Жою',
+    badgePts:'Профильге бонус ұпайлар',place1:'🥇 1-орын',place2:'🥈 2-орын',place3:'🥉 3-орын',
+  }
+};
+let lang = localStorage.getItem('selectedLanguage') || 'ru';
+
+function t(k){ return T[lang][k] || k; }
+function setLang(l){
+  lang=l; localStorage.setItem('selectedLanguage',l);
+  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  applyTranslations();
+}
+function applyTranslations(){
+  const ids = {
+    tbBack:'back',s1Title:'s1Title',s1Sub:'s1Sub',myRoomsLbl:'myRooms',
+    createRoomLbl:'createRoom',s2Title:'s2Title',s2Sub:'s2Sub',titleLbl:'titleLbl',
+    createLbl:'createLbl',cancelLbl:'cancelLbl',s3Title:'s3Title',s3Sub:'s3Sub',
+    addQBtn:'addQ',openRoomLbl:'openRoom',joinCodeLbl:'joinCode',waitingLbl:'waiting',
+    statPlayersLbl:'statPlayers',statQLbl:'statQ',statStatusLbl:'statStatus',
+    startGameLbl:'startGame',loadingLbl:'loading',liveRankLbl:'liveRank',
+    nextQBtn:'nextQ',endGameBtn:'endGame',s6Title:'s6Title',s6Sub:'s6Sub',newGameBtn:'newGame',
+  };
+  Object.entries(ids).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.textContent=t(key);});
+}
+document.querySelectorAll('.lb').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
+
+// ══════════════════════════════════════════════
+//  SCREEN MANAGER
+// ══════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+//  SUPABASE HELPERS
+// ══════════════════════════════════════════════
+async function getSupabase(){
+  if(typeof supabase !== 'undefined') return supabase;
+  if(typeof EcoBalaAuth !== 'undefined' && EcoBalaAuth.supabase) return EcoBalaAuth.supabase;
+  return null;
+}
+
+// ══════════════════════════════════════════════
+//  ROOM CODE GENERATOR (client side fallback)
+// ══════════════════════════════════════════════
+function genCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function toast(msg,ok=true){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.style.background=ok?'#1B5E20':'#C62828';
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ══════════════════════════════════════════════
+//  LOAD ROOMS
+// ══════════════════════════════════════════════
+async function loadRooms(){
+  const listEl = document.getElementById('roomsList');
+  try {
+    const sb = await getSupabase();
+    if(!sb){ renderDemoRooms(listEl); return; }
+    const { data: rooms } = await sb.from('ecogame_rooms')
+      .select('*').order('created_at',{ascending:false}).limit(20);
+    renderRooms(rooms||[], listEl);
+  } catch(e){ renderDemoRooms(listEl); }
+}
+
+function renderRooms(rooms, el){
+  if(!rooms.length){
+    el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--muted);font-weight:700;">${t('noRooms')}</div>`;
+    return;
+  }
+  el.innerHTML = rooms.map(r=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F8FFFE;border-radius:14px;border:1.5px solid var(--border);margin-bottom:8px;">
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:800;">${r.title}</div>
+        <div style="font-size:12px;color:var(--muted);font-weight:700;margin-top:2px;">
+          Код: <strong>${r.code}</strong> · 
+          <span style="padding:2px 8px;border-radius:99px;font-size:11px;background:${r.status==='lobby'?'#E3F2FD':r.status==='active'?'#E8F5E9':'#f1f5f9'};color:${r.status==='lobby'?'#1565C0':r.status==='active'?'#2E7D32':'#64748b'};">
+            ${r.status==='lobby'?t('lobbySec'):r.status==='active'?t('activeSec'):t('finSec')}
+          </span>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="openExistingRoom('${r.id}','${r.code}','${r.title}','${r.status}')">
+        ${t('open')}
+      </button>
+    </div>
+  `).join('');
+}
+
+function renderDemoRooms(el){
+  el.innerHTML=`<div style="text-align:center;padding:32px;color:var(--muted);font-weight:700;">${t('noRooms')}</div>`;
+}
+
+// ══════════════════════════════════════════════
+//  CREATE ROOM
+// ══════════════════════════════════════════════
+async function createRoom(){
+  const title = document.getElementById('roomTitle').value.trim();
+  if(!title){ toast('Введите название игры', false); return; }
+  const code = genCode();
+  try {
+    const sb = await getSupabase();
+    if(sb){
+      const {data:{user}} = await sb.auth.getUser();
+      const { data } = await sb.from('ecogame_rooms').insert({
+        code, title, teacher_id: user?.id||'demo', status:'lobby'
+      }).select().single();
+      currentRoom = data;
+    } else {
+      currentRoom = { id:'demo-'+Date.now(), code, title, status:'lobby' };
+    }
+    questions = [];
+    toast(t('roomCreated'));
+    showScreen('s-build');
+    renderQuestionBuilder();
+  } catch(e){ toast('Ошибка: '+e.message, false); }
+}
+
+// ══════════════════════════════════════════════
+//  QUESTION BUILDER
+// ══════════════════════════════════════════════
+function renderQuestionBuilder(){
+  const list = document.getElementById('qList');
+  if(!questions.length){ list.innerHTML=''; return; }
+  list.innerHTML = questions.map((q,i)=>`
+    <div class="q-item" id="qi-${i}">
+      <div class="q-item-hdr">
+        <span class="q-num">${i+1}</span>
+        <span class="q-title">${t('qText')} ${i+1}</span>
+        <select class="fi" style="width:auto;padding:6px 10px;font-size:12px;" onchange="questions[${i}].type=this.value">
+          <option value="text" ${q.type==='text'?'selected':''}>📝 Текст</option>
+          <option value="image" ${q.type==='image'?'selected':''}>🖼️ Фото</option>
+          <option value="video" ${q.type==='video'?'selected':''}>🎬 Видео</option>
+        </select>
+        <button class="q-del" onclick="removeQuestion(${i})">✕</button>
+      </div>
+      <input class="fi" placeholder="${t('qText')}..." value="${q.text||''}"
+        oninput="questions[${i}].text=this.value" style="margin-bottom:8px;">
+      <input class="fi" placeholder="${t('qMedia')}" value="${q.media||''}"
+        oninput="questions[${i}].media=this.value" style="margin-bottom:10px;font-size:13px;">
+      <div class="opts-grid">
+        ${['A','B','C','D'].map((ltr,oi)=>`
+          <div class="opt-row">
+            <span class="opt-label">${ltr}</span>
+            <input class="opt-input" placeholder="${t('opt'+ltr)}" value="${q.opts[oi]||''}"
+              oninput="questions[${i}].opts[${oi}]=this.value">
+            <input type="checkbox" class="opt-check" title="${t('correct')}" ${q.correct===oi?'checked':''}
+              onchange="questions[${i}].correct=${oi}; renderQuestionBuilder();">
+          </div>
+        `).join('')}
+      </div>
+      <div class="time-row">
+        <span class="time-label">⏱ ${t('timeSec')}:</span>
+        <div class="time-btns">
+          ${[5,10,15,20,30,60].map(s=>`
+            <button class="tbtn ${q.time===s?'on':''}" onclick="questions[${i}].time=${s};renderQuestionBuilder();">${s}</button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addQuestion(){
+  questions.push({ type:'text', text:'', media:'', opts:['','','',''], correct:0, time:20 });
+  renderQuestionBuilder();
+  // scroll to bottom
+  setTimeout(()=>{ const l=document.getElementById('qList'); if(l) l.lastElementChild?.scrollIntoView({behavior:'smooth'}); }, 100);
+}
+
+function removeQuestion(i){
+  questions.splice(i,1);
+  renderQuestionBuilder();
+}
+
+// ══════════════════════════════════════════════
+//  SAVE QUESTIONS & OPEN ROOM
+// ══════════════════════════════════════════════
+async function saveAndOpenRoom(){
+  if(!questions.length){ toast('Добавьте хотя бы один вопрос!', false); return; }
+  const valid = questions.every(q=>q.text && q.opts.filter(o=>o).length>=2);
+  if(!valid){ toast('Заполните все вопросы и варианты!', false); return; }
+  try {
+    const sb = await getSupabase();
+    if(sb && currentRoom){
+      // delete old questions
+      await sb.from('ecogame_questions').delete().eq('room_id',currentRoom.id);
+      for(let i=0;i<questions.length;i++){
+        const q = questions[i];
+        const { data: qd } = await sb.from('ecogame_questions').insert({
+          room_id: currentRoom.id, position: i,
+          q_type: q.type, question: q.text, media_url: q.media||null, time_sec: q.time
+        }).select().single();
+        await sb.from('ecogame_options').insert(
+          q.opts.map((opt,oi)=>({ question_id:qd.id, position:oi, text:opt, is_correct:oi===q.correct }))
+        );
+      }
+    }
+    toast(t('saved'));
+    openLobby();
+  } catch(e){ toast('Ошибка сохранения: '+e.message, false); }
+}
+
+// ══════════════════════════════════════════════
+//  LOBBY
+// ══════════════════════════════════════════════
+function openLobby(){
+  if(!currentRoom) return;
+  showScreen('s-lobby');
+  document.getElementById('roomCodeDisplay').textContent = currentRoom.code;
+  document.getElementById('statQ').textContent = questions.length;
+  document.getElementById('statStatus').textContent = t('lobbySec');
+  // QR code
+  document.getElementById('qrcode').innerHTML='';
+  new QRCode(document.getElementById('qrcode'),{
+    text:`${location.origin}/ecogame-join.html?code=${currentRoom.code}`,
+    width:140,height:140,colorDark:'#1B5E20',colorLight:'#ffffff',
+    correctLevel:QRCode.CorrectLevel.M
+  });
+  startPollingParticipants();
+}
+
+function openExistingRoom(id,code,title,status){
+  currentRoom={id,code,title,status};
+  if(status==='active'){ loadGameScreen(); return; }
+  if(status==='finished'){ loadResults(); return; }
+  // load questions
+  loadQuestionsForRoom(id).then(()=>openLobby());
+}
+
+async function loadQuestionsForRoom(rid){
+  try{
+    const sb=await getSupabase();
+    if(!sb) return;
+    const {data}=await sb.from('ecogame_questions').select('*,ecogame_options(*)').eq('room_id',rid).order('position');
+    if(data) questions=data.map(q=>({
+      id:q.id,type:q.q_type,text:q.question,media:q.media_url,time:q.time_sec,
+      opts:(q.ecogame_options||[]).sort((a,b)=>a.position-b.position).map(o=>o.text),
+      correct:(q.ecogame_options||[]).findIndex(o=>o.is_correct),
+      optIds:(q.ecogame_options||[]).sort((a,b)=>a.position-b.position).map(o=>o.id)
+    }));
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════
+//  POLL PARTICIPANTS
+// ══════════════════════════════════════════════
+function startPollingParticipants(){
+  if(pollInterval) clearInterval(pollInterval);
+  pollParticipants();
+  pollInterval=setInterval(pollParticipants,3000);
+}
+async function pollParticipants(){
+  if(!currentRoom) return;
+  try{
+    const sb=await getSupabase();
+    if(!sb) return;
+    const {data}=await sb.from('ecogame_participants')
+      .select('*').eq('room_id',currentRoom.id).eq('role','player').order('score',{ascending:false});
+    if(data){ participants=data; renderLobbyPlayers(); }
+  }catch(e){}
+}
+function renderLobbyPlayers(){
+  document.getElementById('statPlayers').textContent=participants.length;
+  const el=document.getElementById('lobbyPlayerList');
+  if(!participants.length){ el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted);font-weight:700;">Нет игроков</div>`; return; }
+  el.innerHTML=participants.map(p=>`
+    <div class="player-row ${p.is_online?'online':'offline'}">
+      <span class="player-emoji">${p.avatar_emoji||'🌱'}</span>
+      <span class="player-name">${p.nickname}</span>
+      <span class="player-status ${p.is_online?'on':'off'}">${p.is_online?t('online'):t('offline')}</span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  START GAME
+// ══════════════════════════════════════════════
+async function startGame(){
+  if(!participants.length){ toast('Нет игроков!', false); return; }
+  try{
+    const sb=await getSupabase();
+    if(sb) await sb.from('ecogame_rooms').update({status:'active',started_at:new Date(),current_q:0,q_started_at:new Date()}).eq('id',currentRoom.id);
+    currentRoom.status='active'; currentRoom.current_q=0;
+    clearInterval(pollInterval);
+    toast(t('gameStarted'));
+    showScreen('s-game');
+    renderGameQuestion(0);
+    startPollingAnswers();
+  }catch(e){ toast('Ошибка: '+e.message,false); }
+}
+
+// ══════════════════════════════════════════════
+//  GAME QUESTION DISPLAY (teacher view)
+// ══════════════════════════════════════════════
+let currentQIdx=0;
+function renderGameQuestion(idx){
+  currentQIdx=idx;
+  if(!questions[idx]) return;
+  const q=questions[idx];
+  clearInterval(timerInterval);
+  // progress
+  document.getElementById('qProgressText').textContent=`${t('qProgressPre')} ${idx+1} ${t('qProgressOf')} ${questions.length}`;
+  document.getElementById('qpBar').style.width=`${((idx+1)/questions.length)*100}%`;
+  // question
+  document.getElementById('currentQ').textContent=q.text;
+  // media
+  const mEl=document.getElementById('currentQMedia');
+  if(q.media){
+    mEl.innerHTML=q.type==='video'
+      ?`<video src="${q.media}" style="max-width:100%;border-radius:12px;max-height:200px;" controls></video>`
+      :`<img src="${q.media}" style="max-width:100%;border-radius:12px;max-height:200px;object-fit:contain;">`;
+  } else mEl.innerHTML='';
+  // options
+  const colors=['#e74c3c','#3498db','#f39c12','#27ae60'];
+  const shapes=['▲','◼','●','✦'];
+  document.getElementById('currentOpts').innerHTML=q.opts.map((o,i)=>`
+    <div style="padding:10px 14px;border-radius:12px;background:${colors[i]};color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;${i===q.correct?'outline:3px solid #fff;':''}">
+      <span>${shapes[i]}</span> ${o}${i===q.correct?' ✓':''}
+    </div>
+  `).join('');
+  // timer
+  timeLeft=q.time;
+  startTimer(q.time);
+}
+
+function startTimer(sec){
+  const circ=document.getElementById('timerCircle');
+  const circumference=213.6;
+  timeLeft=sec;
+  document.getElementById('timerNum').textContent=sec;
+  circ.style.stroke='#4CAF50';
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    document.getElementById('timerNum').textContent=timeLeft;
+    const pct=timeLeft/sec;
+    circ.style.strokeDashoffset=circumference*(1-pct);
+    circ.style.stroke=timeLeft>sec*0.4?'#4CAF50':timeLeft>sec*0.2?'#F59E0B':'#ef4444';
+    if(timeLeft<=0){ clearInterval(timerInterval); }
+  },1000);
+}
+
+let answerPollInterval=null;
+function startPollingAnswers(){
+  if(answerPollInterval) clearInterval(answerPollInterval);
+  answerPollInterval=setInterval(async()=>{
+    await pollLiveScores();
+  },2000);
+}
+async function pollLiveScores(){
+  if(!currentRoom) return;
+  try{
+    const sb=await getSupabase();
+    if(!sb) return;
+    const {data}=await sb.from('ecogame_participants')
+      .select('*').eq('room_id',currentRoom.id).eq('role','player').order('score',{ascending:false});
+    if(data){
+      participants=data;
+      renderLiveLeaderboard();
+      // count answers for current question
+      if(questions[currentQIdx]){
+        const {count}=await sb.from('ecogame_answers')
+          .select('*',{count:'exact',head:true})
+          .eq('room_id',currentRoom.id)
+          .eq('question_id',questions[currentQIdx].id||'');
+        document.getElementById('qAnsweredText').textContent=`${count||0} ${t('answered')}`;
+      }
+    }
+  }catch(e){}
+}
+function renderLiveLeaderboard(){
+  const el=document.getElementById('liveLeaderboard');
+  el.innerHTML=participants.slice(0,8).map((p,i)=>`
+    <div class="player-row online">
+      <div class="rank-badge ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
+      <span class="player-emoji">${p.avatar_emoji||'🌱'}</span>
+      <span class="player-name">${p.nickname}</span>
+      <span class="player-score">${p.score} ${t('pts')}</span>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════
+//  NEXT QUESTION
+// ══════════════════════════════════════════════
+async function nextQuestion(){
+  clearInterval(timerInterval);
+  const next=currentQIdx+1;
+  if(next>=questions.length){ endGame(); return; }
+  try{
+    const sb=await getSupabase();
+    if(sb) await sb.from('ecogame_rooms').update({current_q:next,q_started_at:new Date()}).eq('id',currentRoom.id);
+  }catch(e){}
+  renderGameQuestion(next);
+}
+
+// ══════════════════════════════════════════════
+//  END GAME
+// ══════════════════════════════════════════════
+async function endGame(){
+  clearInterval(timerInterval);
+  clearInterval(answerPollInterval);
+  try{
+    const sb=await getSupabase();
+    if(sb){
+      await sb.from('ecogame_rooms').update({status:'finished',finished_at:new Date()}).eq('id',currentRoom.id);
+      // write leaderboard
+      const badgePts=[100,50,20];
+      for(let i=0;i<participants.length;i++){
+        const bp=i<3?badgePts[i]:0;
+        await sb.from('ecogame_leaderboard').upsert({
+          room_id:currentRoom.id,participant_id:participants[i].id,
+          nickname:participants[i].nickname,avatar_emoji:participants[i].avatar_emoji,
+          total_score:participants[i].score,rank:i+1,badge_points:bp
+        });
+      }
+    }
+  }catch(e){}
+  toast(t('gameEnded'));
+  loadResults();
+}
+
+// ══════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════
+async function loadResults(){
+  showScreen('s-results');
+  let sorted=participants.sort((a,b)=>b.score-a.score);
+  const el=document.getElementById('resultsContent');
+  const podium=[
+    {rank:1,emoji:'🥇',color:'#FFD700',bg:'linear-gradient(135deg,#FFF9C4,#FFF176)',bp:100},
+    {rank:2,emoji:'🥈',color:'#9E9E9E',bg:'linear-gradient(135deg,#F5F5F5,#EEEEEE)',bp:50},
+    {rank:3,emoji:'🥉',color:'#CD7F32',bg:'linear-gradient(135deg,#EFEBE9,#D7CCC8)',bp:20},
+  ];
+  const top3=sorted.slice(0,3);
+  el.innerHTML=`
+    <div class="card" style="background:linear-gradient(160deg,#1B5E20,#2E7D32);color:#fff;text-align:center;padding:32px;">
+      <div style="font-size:36px;margin-bottom:16px;">🏆</div>
+      <div style="font-size:20px;font-weight:900;margin-bottom:20px;">${currentRoom?.title||'EcoGame'}</div>
+      <div style="display:flex;justify-content:center;align-items:flex-end;gap:12px;">
+        ${[1,0,2].map(ri=>top3[ri]?`
+          <div style="background:rgba(255,255,255,0.15);border-radius:16px;padding:16px 20px;min-width:100px;">
+            <div style="font-size:28px;">${podium[ri].emoji}</div>
+            <div style="font-size:12px;font-weight:900;opacity:.8;">#${ri+1}</div>
+            <div style="font-size:24px;">${top3[ri]?.avatar_emoji||'🌱'}</div>
+            <div style="font-size:13px;font-weight:800;margin-top:4px;">${top3[ri]?.nickname||''}</div>
+            <div style="font-size:16px;font-weight:900;margin-top:4px;">${top3[ri]?.score||0}</div>
+            <div style="font-size:11px;opacity:.7;margin-top:4px;">+${podium[ri].bp} ${t('badgePts')}</div>
+          </div>
+        `:'').join('')}
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div style="font-size:14px;font-weight:800;margin-bottom:12px;">📋 Все результаты</div>
+      ${sorted.map((p,i)=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:${i<3?'#F0FBF0':'#f8fafc'};border:1.5px solid ${i<3?'var(--border)':'#f1f5f9'};margin-bottom:6px;">
+          <div class="rank-badge ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i+1}</div>
+          <span style="font-size:20px;">${p.avatar_emoji||'🌱'}</span>
+          <span style="font-size:14px;font-weight:800;flex:1;">${p.nickname}</span>
+          <span style="font-size:16px;font-weight:900;color:var(--gm);">${p.score}</span>
+          ${i<3?`<span style="font-size:11px;background:#E8F5E9;color:#2E7D32;padding:2px 8px;border-radius:99px;font-weight:800;">+${[100,50,20][i]}⭐</span>`:''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════
+//  DELETE ROOM
+// ══════════════════════════════════════════════
+async function deleteRoom(){
+  if(!confirm('Удалить комнату?')) return;
+  try{
+    const sb=await getSupabase();
+    if(sb&&currentRoom) await sb.from('ecogame_rooms').delete().eq('id',currentRoom.id);
+    clearInterval(pollInterval);
+    currentRoom=null; questions=[]; participants=[];
+    showScreen('s-home');
+    loadRooms();
+  }catch(e){ toast('Ошибка',false); }
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+setLang(lang);
+loadRooms();
+</script>
+</body>
+</html>

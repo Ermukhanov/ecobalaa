@@ -1,0 +1,637 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoBala - Учительская</title>
+<meta name="description" content="EcoBala для учителей и школ: экологические задания, управление классом, обучение детей и подростков экологии в цифровом формате.">
+<meta name="keywords" content="EcoBala учительская, EcoBala для школ, экологическое образование школа, эко обучение для учителей, экологический стартап Казахстан, EcoBala">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="EcoBala">
+<meta property="og:title" content="EcoBala - учительская и эко-обучение для школ">
+<meta property="og:description" content="Инструменты EcoBala для педагогов, школ и экологического обучения детей и подростков.">
+<meta property="og:image" content="iconca.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EcoBala - учительская и эко-обучение для школ">
+<meta name="twitter:description" content="Платформа EcoBala для учителей и школ с экологическими материалами и заданиями.">
+<meta name="twitter:image" content="iconca.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap&subset=cyrillic,cyrillic-ext" rel="stylesheet">
+<style>
+  /* ── Казахский шрифт фикс ───────────────────────────────────────────
+     Noto Sans покрывает казахские буквы: Ә Ғ Қ Ң Ө Ұ Ү І
+     unicode-range заставляет браузер использовать Noto Sans ТОЛЬКО
+     для символов которых нет в Nunito (казахский расширенный кириллица)
+  ─────────────────────────────────────────────────────────────────── */
+  @font-face {
+    font-family: 'KazFont';
+    src: local('Noto Sans');
+    unicode-range: U+0400-045F, U+04D9, U+04E9, U+04B1, U+04A3, U+04BB,
+                   U+049B, U+04A2, U+04E8, U+04B0, U+0456, U+04AF, U+049A,
+                   U+04BA, U+04D8; /* казахский кириллический диапазон */
+  }
+  /* Глобальный стек: сначала Nunito (латиница/цифры), потом Noto Sans (казахский) */
+  *, body, input, textarea, select, button, span, div, p, h1, h2, h3, h4, h5, h6, a, li {
+    font-family: 'Nunito', 'Noto Sans', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  }
+
+:root{
+  --blue:#1565C0;--blue-mid:#1E88E5;--blue-light:#BBDEFB;--blue-pale:#E3F2FD;
+  --green:#2E7D32;--green-pale:#E8F5E9;--green-light:#C8E6C9;
+  --amber:#F57F17;--amber-light:#FFF8E1;
+  --text:#0D1B2A;--text-muted:#546E7A;--bg:#F0F6FF;--radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ===== LOGIN SCREEN ===== */
+#loginScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,#E3F2FD 0%,#F0F6FF 60%,#E8F5E9 100%);
+  padding:20px;
+}
+.login-card{background:#fff;border-radius:24px;padding:36px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(21,101,192,0.12);}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo-inner{font-family:'Unbounded','Noto Sans',sans-serif;font-weight:900;font-size:22px;color:var(--blue);display:inline-flex;align-items:center;gap:10px;}
+.login-icon{width:44px;height:44px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.login-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:6px;text-align:center;}
+.login-sub{font-size:13px;color:var(--text-muted);text-align:center;line-height:1.6;margin-bottom:24px;}
+.tg-info-box{background:var(--blue-pale);border-radius:12px;padding:16px;margin-bottom:20px;border:1px solid var(--blue-light);}
+.tg-step{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:13px;font-weight:600;line-height:1.5;}
+.tg-step:last-child{margin-bottom:0;}
+.tg-step-num{width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.tg-bot-link{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--blue),var(--blue-mid));border-radius:var(--radius);padding:14px 18px;text-decoration:none;margin-bottom:20px;transition:all 0.2s;box-shadow:0 4px 16px rgba(21,101,192,0.2);}
+.tg-bot-link:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(21,101,192,0.3);}
+.tg-bot-icon{width:42px;height:42px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tg-bot-text{color:#fff;}
+.tg-bot-title{font-size:15px;font-weight:900;}
+.tg-bot-sub{font-size:12px;opacity:0.8;}
+.divider{text-align:center;font-size:12px;color:var(--text-muted);margin:16px 0;font-weight:600;position:relative;}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--blue-light);}
+.divider::before{left:0;}.divider::after{right:0;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;display:block;}
+.form-input{width:100%;padding:12px 16px;border-radius:12px;border:2px solid var(--blue-light);font-family:'Nunito',sans-serif;font-size:14px;outline:none;background:var(--blue-pale);transition:all 0.2s;}
+.form-input:focus{border-color:var(--blue-mid);background:#fff;}
+.login-btn{width:100%;padding:13px;border-radius:50px;border:none;background:var(--blue);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;margin-top:4px;}
+.login-btn:hover{background:#0D47A1;transform:translateY(-1px);box-shadow:0 6px 20px rgba(21,101,192,0.3);}
+.msg{border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px;display:none;}
+.msg.err{background:#FFEBEE;color:#C62828;}
+.msg.ok{background:var(--green-pale);color:var(--green);}
+.back-link{text-align:center;margin-top:16px;font-size:13px;}
+.back-link a{color:var(--blue);font-weight:700;text-decoration:none;}
+
+/* ===== TEACHER APP ===== */
+#teacherApp{display:none;}
+.topbar{background:#fff;border-bottom:1px solid var(--blue-light);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:100;}
+.tb-logo{font-family:'Unbounded','Noto Sans',sans-serif;font-weight:900;font-size:17px;color:var(--blue);display:flex;align-items:center;gap:8px;}
+.tb-logo-icon{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.teacher-name-pill{background:var(--blue-pale);border-radius:50px;padding:6px 14px;font-size:13px;font-weight:800;color:var(--blue);}
+.logout-btn{background:none;border:1.5px solid var(--blue-light);border-radius:50px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:var(--text-muted);transition:all 0.2s;}
+.logout-btn:hover{background:var(--blue-pale);color:var(--blue);}
+
+.content{max-width:900px;margin:0 auto;padding:24px 18px;}
+
+/* TABS */
+.tab-bar{display:flex;gap:4px;background:#fff;border-radius:var(--radius);padding:4px;margin-bottom:24px;border:1px solid var(--blue-light);}
+.tab-btn{flex:1;padding:11px;border:none;background:transparent;border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--text-muted);cursor:pointer;transition:all 0.2s;}
+.tab-btn.active{background:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(21,101,192,0.25);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ROOM CARD */
+.create-room-card{background:#fff;border-radius:var(--radius);padding:28px;border:1px solid var(--blue-light);margin-bottom:20px;text-align:center;}
+.crc-title{font-family:'Unbounded','Noto Sans',sans-serif;font-size:20px;font-weight:900;color:var(--blue);margin-bottom:8px;}
+.crc-sub{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:24px;}
+.create-room-btn{background:var(--blue);color:#fff;border:none;border-radius:50px;padding:16px 36px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(21,101,192,0.25);}
+.create-room-btn:hover{background:#0D47A1;transform:translateY(-2px);box-shadow:0 8px 24px rgba(21,101,192,0.35);}
+
+/* ACTIVE ROOM */
+.active-room{display:none;background:linear-gradient(135deg,#0D47A1,#1E88E5);border-radius:var(--radius);padding:28px;margin-bottom:20px;color:#fff;text-align:center;}
+.room-label{font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;opacity:0.7;margin-bottom:8px;}
+.room-code{font-family:'Unbounded','Noto Sans',sans-serif;font-size:56px;font-weight:900;letter-spacing:8px;margin-bottom:12px;}
+.room-code-sub{font-size:14px;opacity:0.8;margin-bottom:20px;}
+.room-status{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;}
+.room-dot{width:10px;height:10px;background:#69F0AE;border-radius:50%;animation:roomPulse 1.5s infinite;}
+@keyframes roomPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.room-players{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px;}
+.player-chip{background:rgba(255,255,255,0.2);border-radius:50px;padding:6px 14px;font-size:13px;font-weight:700;}
+.room-btn{background:#fff;color:var(--blue);border:none;border-radius:50px;padding:12px 28px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;transition:all 0.2s;margin:4px;}
+.room-btn:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(0,0,0,0.15);}
+.room-btn.danger{background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.3);}
+.room-btn.danger:hover{background:rgba(255,255,255,0.25);}
+
+/* QUIZ IN PROGRESS */
+.quiz-in-progress{display:none;}
+.qip-card{background:#fff;border-radius:var(--radius);padding:20px;margin-bottom:14px;border:1px solid var(--blue-light);}
+.qip-q-num{font-size:12px;font-weight:800;color:var(--blue);margin-bottom:6px;}
+.qip-q-text{font-size:18px;font-weight:800;margin-bottom:16px;}
+.qip-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.qip-opt{padding:14px;border-radius:12px;font-size:14px;font-weight:700;text-align:center;border:2px solid var(--blue-light);cursor:pointer;transition:all 0.2s;}
+.qip-opt:nth-child(1){background:#E3F2FD;color:#0D47A1;}
+.qip-opt:nth-child(2){background:#E8F5E9;color:#1B5E20;}
+.qip-opt:nth-child(3){background:#FFF3E0;color:#E65100;}
+.qip-opt:nth-child(4){background:#EDE7F6;color:#4527A0;}
+.qip-opt:hover{transform:scale(1.02);}
+.qip-timer{font-family:'Unbounded','Noto Sans',sans-serif;font-size:32px;font-weight:900;color:var(--blue);text-align:center;margin:14px 0;}
+.qip-progress{height:6px;background:var(--blue-light);border-radius:3px;margin-bottom:20px;overflow:hidden;}
+.qip-prog-fill{height:100%;background:var(--blue);border-radius:3px;transition:width 1s linear;}
+.leaderboard-live{background:#fff;border-radius:var(--radius);padding:16px;border:1px solid var(--blue-light);}
+.llb-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f4f8;}
+.llb-row:last-child{border-bottom:none;}
+.llb-rank{font-size:14px;font-weight:900;color:var(--text-muted);width:22px;}
+.llb-name{flex:1;font-size:14px;font-weight:800;}
+.llb-pts{font-family:'Unbounded','Noto Sans',sans-serif;font-size:14px;font-weight:900;color:var(--blue);}
+.next-q-btn{width:100%;padding:14px;border-radius:50px;border:none;background:var(--blue);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;margin-top:14px;}
+.next-q-btn:hover{background:#0D47A1;}
+
+/* RESULTS */
+.results-screen{display:none;}
+.rs-podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin:20px 0 28px;}
+.rs-place{text-align:center;flex:1;max-width:120px;}
+.rs-bar{border-radius:var(--radius) var(--radius) 0 0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:12px;}
+.rs-place:nth-child(1) .rs-bar{background:linear-gradient(to top,#FF8F00,#FFD54F);height:90px;}
+.rs-place:nth-child(2) .rs-bar{background:linear-gradient(to top,#1565C0,#1E88E5);height:120px;}
+.rs-place:nth-child(3) .rs-bar{background:linear-gradient(to top,#5D4037,#795548);height:72px;}
+.rs-medal{font-size:24px;color:#fff;}
+.rs-name{font-size:13px;font-weight:800;margin-top:6px;}
+.rs-pts{font-size:11px;color:var(--text-muted);}
+
+/* BOARD GAME */
+.board-card{background:#fff;border-radius:var(--radius);padding:24px;border:1px solid var(--blue-light);margin-bottom:16px;}
+.board-title{font-size:16px;font-weight:900;color:var(--blue);margin-bottom:8px;}
+.board-desc{font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;}
+.board-launch-btn{background:linear-gradient(135deg,var(--green),#43A047);color:#fff;border:none;border-radius:50px;padding:13px 28px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s;box-shadow:0 4px 14px rgba(46,125,50,0.25);}
+.board-launch-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(46,125,50,0.3);}
+
+/* SESSIONS */
+.session-card{background:#fff;border-radius:var(--radius);padding:16px 20px;border:1px solid var(--blue-light);margin-bottom:10px;display:flex;align-items:center;gap:14px;}
+.sc-code{font-family:'Unbounded','Noto Sans',sans-serif;font-size:18px;font-weight:900;color:var(--blue);width:80px;}
+.sc-info{flex:1;}
+.sc-date{font-size:12px;color:var(--text-muted);}
+.sc-players{font-size:13px;font-weight:700;}
+.sc-result-pill{background:var(--blue-pale);color:var(--blue);border-radius:50px;padding:4px 12px;font-size:12px;font-weight:800;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:#0D47A1;color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:700;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+@media(max-width:600px){
+  .qip-opts{grid-template-columns:1fr;}
+  .room-code{font-size:40px;letter-spacing:6px;}
+  .tab-btn{font-size:12px;padding:9px 6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-inner">
+        <div class="login-icon">👩‍🏫</div>
+        EcoBala
+      </div>
+    </div>
+    <div class="login-title">Учительская панель</div>
+    <div class="login-sub">Доступ только для зарегистрированных учителей. Логин и пароль получите через Telegram-бот.</div>
+
+    <div class="tg-info-box">
+      <div class="tg-step">
+        <div class="tg-step-num">1</div>
+        <span>Откройте Telegram-бот <strong>@Ecobalabot</strong></span>
+      </div>
+      <div class="tg-step">
+        <div class="tg-step-num">2</div>
+        <span>Отправьте команду <strong>/teacher</strong></span>
+      </div>
+      <div class="tg-step">
+        <div class="tg-step-num">3</div>
+        <span>Бот пришлёт ваш логин и пароль автоматически</span>
+      </div>
+      <div class="tg-step">
+        <div class="tg-step-num">4</div>
+        <span>Введите их ниже для входа</span>
+      </div>
+    </div>
+
+    <a class="tg-bot-link" href="https://t.me/Ecobalabot" target="_blank">
+      <div class="tg-bot-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+      </div>
+      <div class="tg-bot-text">
+        <div class="tg-bot-title">Открыть @Ecobalabot</div>
+        <div class="tg-bot-sub">Получить логин и пароль →</div>
+      </div>
+    </a>
+
+    <div class="divider">Уже есть данные? Войдите</div>
+
+    <div class="msg err" id="loginErr"></div>
+    <div class="msg ok" id="loginOk"></div>
+
+    <div class="form-group">
+      <label class="form-label">Логин</label>
+      <input class="form-input" id="teacherLogin" placeholder="teacher_xxxxx" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Пароль</label>
+      <input class="form-input" id="teacherPass" type="password" placeholder="••••••••">
+    </div>
+    <button class="login-btn" onclick="doTeacherLogin()">Войти в учительскую →</button>
+    <div class="back-link" style="margin-top:16px;">
+      <a href="index.html">← Вернуться на главную</a>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TEACHER APP ===== -->
+<div id="teacherApp">
+  <div class="topbar">
+    <div class="tb-logo">
+      <div class="tb-logo-icon">👩‍🏫</div>
+      Учительская
+    </div>
+    <div class="tb-right">
+      <span class="teacher-name-pill" id="teacherNamePill">👩‍🏫 Учитель</span>
+      <button class="logout-btn" onclick="doLogout()">Выйти 🚪</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tbEcoGame" onclick="showTab('ecogame')">🎮 EcoGame</button>
+      <button class="tab-btn" id="tbBoard" onclick="showTab('board')">🖥️ Доска</button>
+      <button class="tab-btn" id="tbHistory" onclick="showTab('history')">📊 История</button>
+    </div>
+
+    <!-- ===== ECOGAME TAB ===== -->
+    <div class="tab-panel active" id="tab-ecogame">
+
+      <!-- Step 1: Create room -->
+      <div class="create-room-card" id="createRoomCard">
+        <div style="font-size:56px;margin-bottom:12px;">🎮</div>
+        <div class="crc-title">EcoGame Викторина</div>
+        <div class="crc-sub">Создайте игровую комнату - ученики заходят по коду со своих устройств. Соревнуйтесь в реальном времени!</div>
+        <div style="margin-bottom:20px;">
+          <label style="font-size:13px;font-weight:700;display:block;margin-bottom:6px;">Выберите тему урока</label>
+          <select id="lessonSelect" style="width:100%;max-width:320px;padding:11px 14px;border-radius:12px;border:1.5px solid var(--blue-light);font-family:'Nunito',sans-serif;font-size:14px;outline:none;background:var(--blue-pale);">
+            <option value="water">🌊 Вода - источник жизни</option>
+            <option value="plants">🌿 Растения и экосистема</option>
+            <option value="waste">♻️ Переработка отходов</option>
+            <option value="climate">🌡️ Климат и атмосфера</option>
+            <option value="animals">🦋 Животный мир Казахстана</option>
+          </select>
+        </div>
+        <button class="create-room-btn" onclick="createRoom()">
+          🚀 Создать комнату
+        </button>
+      </div>
+
+      <!-- Step 2: Room active / waiting -->
+      <div class="active-room" id="activeRoom">
+        <div class="room-label">КОД КОМНАТЫ</div>
+        <div class="room-code" id="roomCode">--</div>
+        <div class="room-code-sub">Ученики вводят этот код на сайте в разделе "Игры"</div>
+        <div class="room-status">
+          <div class="room-dot"></div>
+          <span id="playerCount">Ожидаем игроков...</span>
+        </div>
+        <div class="room-players" id="playersList"></div>
+        <div>
+          <button class="room-btn" onclick="startGame()">▶ Начать игру</button>
+          <button class="room-btn danger" onclick="closeRoom()">✕ Закрыть комнату</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Quiz in progress -->
+      <div class="quiz-in-progress" id="quizInProgress">
+        <div class="qip-card">
+          <div class="qip-q-num" id="qipNum">Вопрос 1 / 10</div>
+          <div class="qip-timer" id="qipTimer">20</div>
+          <div class="qip-progress"><div class="qip-prog-fill" id="qipPF" style="width:100%"></div></div>
+          <div class="qip-q-text" id="qipQ"></div>
+          <div class="qip-opts" id="qipOpts"></div>
+          <button class="next-q-btn" id="nextQBtn" onclick="nextQuestion()" style="display:none">Следующий вопрос →</button>
+        </div>
+        <div class="leaderboard-live">
+          <div style="font-size:14px;font-weight:900;margin-bottom:10px;">🏆 Текущий рейтинг</div>
+          <div id="liveLb"></div>
+        </div>
+      </div>
+
+      <!-- Step 4: Results -->
+      <div class="results-screen" id="resultsScreen">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-size:48px;">🏆</div>
+          <div style="font-family:'Unbounded','Noto Sans',sans-serif;font-size:22px;font-weight:900;color:var(--blue);margin-top:8px;">Игра завершена!</div>
+        </div>
+        <div class="rs-podium" id="rsPodium"></div>
+        <div style="background:#fff;border-radius:var(--radius);border:1px solid var(--blue-light);overflow:hidden;margin-bottom:16px;">
+          <div style="padding:14px 18px;font-size:14px;font-weight:900;border-bottom:1px solid var(--blue-light);">📋 Все участники</div>
+          <div id="rsAllPlayers"></div>
+        </div>
+        <button onclick="resetGame()" style="width:100%;padding:14px;border-radius:50px;border:none;background:var(--blue);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">🔄 Новая игра</button>
+      </div>
+    </div>
+
+    <!-- ===== BOARD TAB ===== -->
+    <div class="tab-panel" id="tab-board">
+      <div class="board-card">
+        <div class="board-title">🖥️ Игра для школьной доски</div>
+        <div class="board-desc">Запустите экологическую викторину на большом экране. Идеально для проектора или интерактивной доски. Одно устройство - вся аудитория.</div>
+        <button class="board-launch-btn" onclick="launchBoardGame()">
+          🚀 Запустить на доске
+        </button>
+      </div>
+      <div class="board-card" id="boardGameArea" style="display:none;">
+        <div id="boardGameContent"></div>
+      </div>
+    </div>
+
+    <!-- ===== HISTORY TAB ===== -->
+    <div class="tab-panel" id="tab-history">
+      <div style="font-size:16px;font-weight:900;margin-bottom:16px;">📊 История игровых сессий</div>
+      <div id="sessionHistory"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// === LOGIN ===
+// Demo: any login starting with "teacher" and pass 6+ chars works
+function doTeacherLogin(){
+  const login=document.getElementById('teacherLogin').value.trim();
+  const pass=document.getElementById('teacherPass').value;
+  const errEl=document.getElementById('loginErr');
+  const okEl=document.getElementById('loginOk');
+  if(!login||!pass){errEl.textContent='Заполните все поля';errEl.style.display='block';okEl.style.display='none';return;}
+  if(!login.toLowerCase().startsWith('teacher')&&login!=='demo'||pass.length<4){
+    errEl.textContent='Неверный логин или пароль. Получите данные в @Ecobalabot';errEl.style.display='block';okEl.style.display='none';return;
+  }
+  okEl.textContent='✅ Входим...';okEl.style.display='block';errEl.style.display='none';
+  setTimeout(()=>{
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('teacherApp').style.display='block';
+    document.getElementById('teacherNamePill').textContent='👩‍🏫 '+login;
+    renderHistory();
+  },700);
+}
+
+function doLogout(){
+  document.getElementById('teacherApp').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('loginOk').style.display='none';
+  resetGame();
+}
+
+// === TABS ===
+function showTab(t){
+  ['ecogame','board','history'].forEach(id=>{
+    document.getElementById('tab-'+id).classList.toggle('active',id===t);
+    let btnId = 'tb'+id.charAt(0).toUpperCase()+id.slice(1);
+    if(id === 'ecogame') btnId = 'tbEcoGame';
+    document.getElementById(btnId).classList.toggle('active',id===t);
+  });
+}
+
+// === ECOGAME ===
+const quizData = {
+  water:[
+    {q:'Сколько % поверхности Земли покрыто водой?',opts:['50%','71%','90%','30%'],ans:1},
+    {q:'Сколько % воды является пресной?',opts:['10%','50%','3%','25%'],ans:2},
+    {q:'Что загрязняет воду больше всего?',opts:['Дождь','Заводы и мусор','Рыбы','Облака'],ans:1},
+    {q:'Где больше всего пресной воды?',opts:['В морях','В реках','В ледниках','В озёрах'],ans:2},
+    {q:'Сколько воды нужно человеку в день?',opts:['0.5 л','2 литра','10 литров','5 литров'],ans:1},
+  ],
+  plants:[
+    {q:'Что производят растения?',opts:['CO2','Азот','Кислород','Водород'],ans:2},
+    {q:'Как называется процесс питания растений?',opts:['Дыхание','Фотосинтез','Испарение','Рост'],ans:1},
+    {q:'Как называются лёгкие планеты?',opts:['Пустыни','Моря','Горы','Леса'],ans:3},
+    {q:'Сколько кислорода производит одно дерево?',opts:['Для 10 людей','Для 100 людей','Для 1 человека','Нисколько'],ans:2},
+    {q:'Зачем сажать деревья?',opts:['Просто красиво','Незачем','Для тени только','Для кислорода и экологии'],ans:3},
+  ],
+  waste:[
+    {q:'Сколько мусора образуется ежегодно?',opts:['100 тонн','1 млн тонн','2 млрд тонн','50 тонн'],ans:2},
+    {q:'Как долго разлагается пластик?',opts:['1 год','10 лет','100 лет','500 лет'],ans:3},
+    {q:'Что нельзя выбрасывать в обычный мусор?',opts:['Газету','Кожуру','Батарейки','Бумагу'],ans:2},
+    {q:'Сколько деревьев спасает тонна бумаги?',opts:['1 дерево','5 деревьев','17 деревьев','100 деревьев'],ans:2},
+    {q:'Что такое компостирование?',opts:['Сжигание','Переработка органики в удобрение','Сортировка металлов','Захоронение'],ans:1},
+  ],
+};
+
+const optColors=['#1565C0','#2E7D32','#F57F17','#7B1FA2'];
+let players=[];let currentQ=0;let gameActive=false;let timer=0;let timerInt;
+let selectedTopic='water';let revealAns=false;
+
+const demoPlayers=['Алия К.','Данияр А.','Нурлан Ж.','Айгерим Т.','Бекзат М.'];
+
+function createRoom(){
+  selectedTopic=document.getElementById('lessonSelect').value;
+  const code=Math.floor(100000+Math.random()*900000).toString();
+  document.getElementById('roomCode').textContent=code;
+  players=demoPlayers.map(n=>({name:n,pts:0,avatar:['🐣','🦁','🐧','🐸','🐻'][demoPlayers.indexOf(n)]}));
+  document.getElementById('createRoomCard').style.display='none';
+  document.getElementById('activeRoom').style.display='block';
+  document.getElementById('playerCount').textContent=`${players.length} игроков подключилось`;
+  document.getElementById('playersList').innerHTML=players.map(p=>`<div class="player-chip">${p.avatar} ${p.name}</div>`).join('');
+}
+
+function closeRoom(){
+  document.getElementById('activeRoom').style.display='none';
+  document.getElementById('createRoomCard').style.display='block';
+}
+
+function startGame(){
+  document.getElementById('activeRoom').style.display='none';
+  document.getElementById('quizInProgress').style.display='block';
+  currentQ=0;gameActive=true;revealAns=false;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const qs=quizData[selectedTopic]||quizData.water;
+  if(currentQ>=qs.length){showResults();return;}
+  const q=qs[currentQ];revealAns=false;
+  document.getElementById('qipNum').textContent=`Вопрос ${currentQ+1} / ${qs.length}`;
+  document.getElementById('qipQ').textContent=q.q;
+  document.getElementById('qipOpts').innerHTML=q.opts.map((o,i)=>`
+    <div class="qip-opt" style="background:${optColors[i]}20;border-color:${optColors[i]}40;color:${optColors[i]};"
+      onclick="revealAnswer(${i})">${o}</div>`).join('');
+  document.getElementById('nextQBtn').style.display='none';
+  startTimer(20);
+  updateLiveLb();
+}
+
+function startTimer(sec){
+  clearInterval(timerInt);timer=sec;
+  document.getElementById('qipTimer').textContent=sec;
+  document.getElementById('qipPF').style.width='100%';
+  timerInt=setInterval(()=>{
+    timer--;
+    document.getElementById('qipTimer').textContent=timer;
+    document.getElementById('qipPF').style.width=(timer/sec*100)+'%';
+    if(timer<=0){clearInterval(timerInt);revealAnswer(-1);}
+  },1000);
+}
+
+function revealAnswer(chosen){
+  if(revealAns)return;revealAns=true;
+  clearInterval(timerInt);
+  const qs=quizData[selectedTopic]||quizData.water;
+  const correct=qs[currentQ].ans;
+  const opts=document.querySelectorAll('.qip-opt');
+  opts.forEach((el,i)=>{
+    el.style.background=i===correct?'#E8F5E9':'#f8f8f8';
+    el.style.borderColor=i===correct?'#2E7D32':'#ddd';
+    el.style.color=i===correct?'#1B5E20':'#aaa';
+    if(i===correct) el.textContent='✅ '+el.textContent;
+  });
+  // Award points randomly to players
+  players.forEach(p=>{ if(Math.random()>0.3) p.pts+=Math.floor(700+Math.random()*300); });
+  updateLiveLb();
+  document.getElementById('nextQBtn').style.display='block';
+}
+
+function nextQuestion(){currentQ++;renderQuestion();}
+
+function updateLiveLb(){
+  const sorted=[...players].sort((a,b)=>b.pts-a.pts);
+  document.getElementById('liveLb').innerHTML=sorted.map((p,i)=>`
+    <div class="llb-row">
+      <div class="llb-rank">${i+1}</div>
+      <div class="llb-name">${p.avatar} ${p.name}</div>
+      <div class="llb-pts">${p.pts.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+function showResults(){
+  clearInterval(timerInt);
+  document.getElementById('quizInProgress').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const sorted=[...players].sort((a,b)=>b.pts-a.pts);
+  const top3=[sorted[1],sorted[0],sorted[2]].filter(Boolean);
+  const h=['90px','120px','72px'];
+  const grads=['linear-gradient(to top,#FF8F00,#FFD54F)','linear-gradient(to top,#1565C0,#1E88E5)','linear-gradient(to top,#5D4037,#795548)'];
+  const medals=['🥈','🥇','🥉'];
+  document.getElementById('rsPodium').innerHTML=top3.map((p,i)=>`
+    <div class="rs-place">
+      <div style="font-size:28px;">${p.avatar}</div>
+      <div class="rs-name">${p.name.split(' ')[0]}</div>
+      <div class="rs-bar" style="background:${grads[i]};height:${h[i]};margin-top:6px;">
+        <div class="rs-medal">${medals[i]}</div>
+      </div>
+      <div class="rs-pts">${p.pts.toLocaleString()} pts</div>
+    </div>`).join('');
+  document.getElementById('rsAllPlayers').innerHTML=sorted.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #f0f4f8;">
+      <span style="font-size:13px;font-weight:900;color:var(--text-muted);width:20px;">${i+1}</span>
+      <span style="font-size:18px;">${p.avatar}</span>
+      <span style="flex:1;font-size:14px;font-weight:800;">${p.name}</span>
+      <span style="font-size:14px;font-weight:900;color:var(--blue);">${p.pts.toLocaleString()}</span>
+    </div>`).join('');
+  // save to history
+  sessions.unshift({code:document.getElementById('roomCode').textContent,date:new Date().toLocaleDateString('ru'),players:players.length,winner:sorted[0].name,topic:document.getElementById('lessonSelect').options[document.getElementById('lessonSelect').selectedIndex].text});
+  renderHistory();
+}
+
+function resetGame(){
+  clearInterval(timerInt);
+  document.getElementById('quizInProgress').style.display='none';
+  document.getElementById('resultsScreen').style.display='none';
+  document.getElementById('activeRoom').style.display='none';
+  document.getElementById('createRoomCard').style.display='block';
+  players=[];currentQ=0;gameActive=false;
+}
+
+// === BOARD GAME ===
+let boardQ=0,boardOpts,boardCorrect,boardTimerInt,boardTimer;
+const boardQuestions=[
+  {q:'Сколько % воды пресная?',opts:['10%','3%','50%','30%'],ans:1},
+  {q:'Что делают леса для планеты?',opts:['Нагревают','Производят кислород','Высушивают','Ничего'],ans:1},
+  {q:'Как долго разлагается пластик?',opts:['10 лет','100 лет','500 лет','1 год'],ans:2},
+  {q:'Что нельзя бросать в мусор?',opts:['Бумагу','Батарейки','Кожуру','Газету'],ans:1},
+  {q:'Что такое фотосинтез?',opts:['Сон растений','Питание растений светом','Гибель листьев','Полив'],ans:1},
+];
+
+function launchBoardGame(){
+  document.getElementById('boardGameArea').style.display='block';
+  boardQ=0;renderBoardQ();
+}
+
+function renderBoardQ(){
+  if(boardQ>=boardQuestions.length){
+    document.getElementById('boardGameContent').innerHTML=`
+      <div style="text-align:center;padding:20px;">
+        <div style="font-size:56px;margin-bottom:12px;">🎉</div>
+        <div style="font-family:'Unbounded','Noto Sans',sans-serif;font-size:22px;font-weight:900;color:var(--blue);">Викторина завершена!</div>
+        <button onclick="boardQ=0;renderBoardQ()" style="margin-top:16px;padding:12px 28px;border-radius:50px;border:none;background:var(--blue);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">🔄 Сначала</button>
+      </div>`;
+    return;
+  }
+  const q=boardQuestions[boardQ];
+  boardTimer=15;boardCorrect=q.ans;
+  clearInterval(boardTimerInt);
+  document.getElementById('boardGameContent').innerHTML=`
+    <div style="font-size:12px;font-weight:800;color:var(--text-muted);margin-bottom:6px;">Вопрос ${boardQ+1} / ${boardQuestions.length}</div>
+    <div style="font-size:18px;font-weight:900;margin-bottom:16px;">${q.q}</div>
+    <div id="btimer" style="font-family:'Unbounded','Noto Sans',sans-serif;font-size:28px;font-weight:900;color:var(--blue);text-align:center;margin-bottom:12px;">${boardTimer}</div>
+    <div style="height:5px;background:var(--blue-light);border-radius:3px;margin-bottom:16px;overflow:hidden;"><div id="btimerBar" style="height:100%;background:var(--blue);border-radius:3px;width:100%;transition:width 1s linear;"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" id="boardOpts">
+      ${q.opts.map((o,i)=>`<div onclick="boardAnswer(${i})" style="padding:16px;border-radius:12px;background:${optColors[i]}20;border:2px solid ${optColors[i]}40;color:${optColors[i]};font-size:15px;font-weight:800;text-align:center;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">${['A','B','C','D'][i]}) ${o}</div>`).join('')}
+    </div>`;
+  boardTimerInt=setInterval(()=>{
+    boardTimer--;
+    const tEl=document.getElementById('btimer'),bEl=document.getElementById('btimerBar');
+    if(tEl) tEl.textContent=boardTimer;
+    if(bEl) bEl.style.width=(boardTimer/15*100)+'%';
+    if(boardTimer<=0){clearInterval(boardTimerInt);boardAnswer(-1);}
+  },1000);
+}
+
+function boardAnswer(i){
+  clearInterval(boardTimerInt);
+  const opts=document.querySelectorAll('#boardOpts > div');
+  opts.forEach((el,idx)=>{
+    el.style.background=idx===boardCorrect?'#E8F5E9':'#f5f5f5';
+    el.style.borderColor=idx===boardCorrect?'#2E7D32':'#ddd';
+    el.style.color=idx===boardCorrect?'#1B5E20':'#bbb';
+  });
+  setTimeout(()=>{boardQ++;renderBoardQ();},2000);
+}
+
+// === HISTORY ===
+let sessions=[
+  {code:'482915',date:'09.11.2024',players:6,winner:'Данияр А.',topic:'🌊 Вода - источник жизни'},
+  {code:'731024',date:'07.11.2024',players:8,winner:'Алия К.',topic:'🌿 Растения и экосистема'},
+  {code:'295847',date:'05.11.2024',players:5,winner:'Нурлан Ж.',topic:'♻️ Переработка отходов'},
+];
+
+function renderHistory(){
+  const el=document.getElementById('sessionHistory');if(!el)return;
+  el.innerHTML=sessions.map(s=>`
+    <div class="session-card">
+      <div class="sc-code">${s.code}</div>
+      <div class="sc-info">
+        <div class="sc-players">🏆 ${s.winner} победил | ${s.players} игроков</div>
+        <div class="sc-date">${s.topic} • ${s.date}</div>
+      </div>
+      <span class="sc-result-pill">Завершено</span>
+    </div>`).join('');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
+

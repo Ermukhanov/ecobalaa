@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoBala - Вход учителя</title>
+<link rel="icon" href="iconca.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:wght@400;600;700;800&display=swap&subset=cyrillic,cyrillic-ext" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase2.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Nunito','Noto Sans',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(160deg,#0D2818,#1B5E20,#2E7D32);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  position:relative;
+}
+
+/* blobs */
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.b1{width:400px;height:400px;background:rgba(76,175,80,0.12);top:-100px;right:-100px;}
+.b2{width:300px;height:300px;background:rgba(129,199,132,0.1);bottom:-80px;left:-80px;}
+
+.wrap{width:100%;max-width:500px;position:relative;z-index:1;}
+
+/* header */
+.hdr{text-align:center;margin-bottom:32px;}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;}
+.logo-img{width:48px;height:48px;border-radius:13px;object-fit:cover;box-shadow:0 4px 14px rgba(46,125,50,0.2);}
+.logo-name{font-size:22px;font-weight:900;color:#fff;}
+.h-title{font-size:26px;font-weight:900;color:#fff;margin-bottom:8px;}
+.h-sub{font-size:14px;color:rgba(255,255,255,0.75);font-weight:600;}
+
+/* card */
+.card{background:rgba(255,255,255,0.98);border-radius:24px;padding:32px 28px;box-shadow:0 20px 60px rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.3);position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.1),transparent);animation:shimmer 3s infinite;}
+@keyframes shimmer{0%,100%{transform:translate(0,0)}50%{transform:translate(50px,50px)}}
+
+/* tabs */
+.tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid #e2e8f0;}
+.tab{flex:1;padding:12px;text-align:center;border-bottom:3px solid transparent;font-weight:800;cursor:pointer;color:#94a3b8;font-size:14px;transition:all .2s;}
+.tab.active{color:#1B5E20;border-bottom-color:#1B5E20;}
+
+/* screen */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* form */
+.fg{margin-bottom:18px;}
+.fl{display:block;font-size:13px;font-weight:800;color:#0f172a;margin-bottom:8px;}
+.fi{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:2px solid #e2e8f0;
+  font-family:'Nunito';
+  font-size:14px;
+  font-weight:600;
+  color:#0f172a;
+  background:#f8fafc;
+  outline:none;
+  transition:all .2s;
+}
+.fi:focus{
+  border-color:#4CAF50;
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(76,175,80,0.12);
+}
+
+select.fi{
+  cursor:pointer;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231B5E20' d='M0 3l6 6 6-6z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
+
+.schools-loading{text-align:center;color:#94a3b8;font-size:13px;padding:12px 0;}
+.schools-loading::after{content:'...';animation:dots .6s steps(3,end) infinite;}
+@keyframes dots{0%,20%{content:'.';}40%{content:'..';}60%,100%{content:'...'}}
+
+/* msg */
+.msg{padding:12px 14px;border-radius:12px;font-size:13px;font-weight:700;margin-bottom:16px;display:none;}
+.msg.show{display:block;}
+.msg.err{background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;}
+.msg.ok{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;}
+
+/* buttons */
+.sbtn{
+  width:100%;
+  padding:13px;
+  border-radius:13px;
+  border:none;
+  background:linear-gradient(135deg,#1B5E20,#43A047);
+  color:#fff;
+  font-family:'Nunito';
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  transition:all .2s;
+  margin-top:8px;
+  box-shadow:0 6px 20px rgba(27,94,32,0.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.sbtn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(27,94,32,0.45);}
+.sbtn:active{transform:scale(0.98);}
+.sbtn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+.sp{
+  width:16px;
+  height:16px;
+  border:2.5px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:none;
+}
+.sbtn.ld .bt{display:none;}
+.sbtn.ld .sp{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* info */
+.info{background:#E8F5E9;border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:#2E7D32;border:1px solid #C8E6C9;line-height:1.5;}
+.info strong{font-weight:800;}
+
+/* links */
+.footer{text-align:center;margin-top:20px;font-size:13px;color:#94a3b8;}
+.footer a{color:#1B5E20;font-weight:800;text-decoration:none;}
+.footer a:hover{text-decoration:underline;}
+
+/* lang */
+.lang-sw{position:absolute;top:20px;right:20px;display:flex;background:#E8F5E9;border-radius:20px;padding:3px;z-index:10;}
+.lang-btn{padding:5px 12px;border-radius:15px;border:none;background:transparent;font-family:'Nunito';font-size:11px;font-weight:800;cursor:pointer;color:#1B5E20;transition:all .2s;}
+.lang-btn.on{background:#2E7D32;color:#fff;}
+
+/* responsive */
+@media(max-width:480px){
+  .card{padding:24px 18px;}
+  .h-title{font-size:22px;}
+  .logo-row{gap:8px;}
+  .logo-img{width:40px;height:40px;}
+}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<div class="lang-sw">
+  <button class="lang-btn on" onclick="setLang('ru')">РУ</button>
+  <button class="lang-btn" onclick="setLang('kz')">КЗ</button>
+</div>
+
+<div class="wrap">
+  <div class="hdr">
+    <div class="logo-row">
+      <img src="iconca.jpg" class="logo-img">
+      <div>
+        <div class="logo-name">EcoBala</div>
+      </div>
+    </div>
+    <h1 class="h-title" data-lang-key="title">Входобучающие</h1>
+    <p class="h-sub" data-lang-key="subtitle">Платформа для учителей экологии</p>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')" data-lang-key="loginBtn">Вход</button>
+      <button class="tab" onclick="switchTab('register')" data-lang-key="registerBtn">Регистрация</button>
+    </div>
+
+    <!-- SCREEN: LOGIN -->
+    <div id="loginScreen" class="screen active">
+      <div class="info" data-lang-key="loginInfo">
+        <strong>📧 Учитель:</strong> Используй свою рабочую почту для входа
+      </div>
+
+      <div class="msg errMsg"></div>
+      <div class="msg okMsg"></div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="emailLabel">Почта (Email)</label>
+        <input type="email" id="loginEmail" class="fi" placeholder="your@school.kz" autocomplete="email">
+      </div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="passwordLabel">Пароль</label>
+        <input type="password" id="loginPass" class="fi" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button class="sbtn" id="loginBtn" onclick="handleLogin()">
+        <span class="bt">🔓 Войти</span>
+        <div class="sp"></div>
+      </button>
+
+      <div class="footer">
+        <p data-lang-key="noAccount">Нет аккаунта? <a href="javascript:switchTab('register')" data-lang-key="registerLink">Создать</a></p>
+      </div>
+    </div>
+
+    <!-- SCREEN: REGISTER -->
+    <div id="registerScreen" class="screen">
+      <div class="info" data-lang-key="registerInfo">
+        <strong>👨‍🏫 Новый учитель:</strong> Создай аккаунт для управления викторинами EcoGame
+      </div>
+
+      <div class="msg errMsg"></div>
+      <div class="msg okMsg"></div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="fullNameLabel">ФИ (Полное имя)</label>
+        <input type="text" id="regName" class="fi" placeholder="Иван Петров" autocomplete="name">
+      </div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="schoolLabel">Школа</label>
+        <select id="regSchool" class="fi" onchange="selectSchool()">
+          <option value="" data-lang-key="selectSchool">-- Выбери школу --</option>
+        </select>
+        <div class="schools-loading" id="schoolsLoading" style="display:none;">Загрузка...</div>
+      </div>
+
+      <div class="fg" id="customSchoolDiv" style="display:none;">
+        <label class="fl" data-lang-key="customSchool">Своя школа</label>
+        <input type="text" id="regCustomSchool" class="fi" placeholder="Название школы" autocomplete="off">
+      </div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="emailLabel">Почта (Email)</label>
+        <input type="email" id="regEmail" class="fi" placeholder="your@school.kz" autocomplete="email">
+      </div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="passwordLabel">Пароль</label>
+        <input type="password" id="regPass" class="fi" placeholder="Минимум 8 символов" autocomplete="new-password">
+      </div>
+
+      <div class="fg">
+        <label class="fl" data-lang-key="confirmPassword">Подтверди пароль</label>
+        <input type="password" id="regPassConfirm" class="fi" placeholder="Повтори пароль" autocomplete="new-password">
+      </div>
+
+      <button class="sbtn" id="registerBtn" onclick="handleRegister()">
+        <span class="bt">✨ Создать аккаунт</span>
+        <div class="sp"></div>
+      </button>
+
+      <div class="footer">
+        <p data-lang-key="haveAccount">Уже есть аккаунт? <a href="javascript:switchTab('login')" data-lang-key="loginLink">Войти</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== LANGUAGE SYSTEM =====
+const translations = {
+  ru: {
+    title: 'Входобучающие',
+    subtitle: 'Платформа для учителей экологии',
+    loginBtn: 'Вход',
+    registerBtn: 'Регистрация',
+    loginInfo: '📧 Учитель: Используй свою рабочую почту для входа',
+    registerInfo: '👨‍🏫 Новый учитель: Создай аккаунт для управления викторинами EcoGame',
+    emailLabel: 'Почта (Email)',
+    passwordLabel: 'Пароль',
+    noAccount: 'Нет аккаунта?',
+    registerLink: 'Создать',
+    registerBtn: 'Регистрация',
+    fullNameLabel: 'ФИ (Полное имя)',
+    schoolLabel: 'Школа',
+    selectSchool: '-- Выбери школу --',
+    customSchool: 'Своя школа',
+    confirmPassword: 'Подтверди пароль',
+    haveAccount: 'Уже есть аккаунт?',
+    loginLink: 'Войти',
+    errorInvalidEmail: '❌ Неверная почта',
+    errorPasswordShort: '❌ Пароль минимум 8 символов',
+    errorPasswordMismatch: '❌ Пароли не совпадают',
+    errorEmailExists: '❌ Эта почта уже зарегистрирована',
+    errorFillAll: '❌ Заполни все поля',
+    errorLogin: '❌ Неверная почта или пароль',
+    successLogin: '✅ Добро пожаловать! Загрузка...',
+    successRegister: '✅ Аккаунт создан! Перенаправление...',
+    errorRegister: '❌ Ошибка регистрации'
+  },
+  kz: {
+    title: 'Мұғалім үшін',
+    subtitle: 'Экология көмектесінің платформасы',
+    loginBtn: 'Кіру',
+    registerBtn: 'Тіркелу',
+    loginInfo: '📧 Мұғалім: Өз ісі поштасын пайдалан',
+    registerInfo: '👨‍🏫 Жаңа мұғалім: EcoGame викториналарын басқару үшін аккаунт жасау',
+    emailLabel: 'Пошта (Email)',
+    passwordLabel: 'Құпия сөз',
+    noAccount: 'Аккаунты жоқ па?',
+    registerLink: 'Жасау',
+    fullNameLabel: 'ТАҚ (Толық аты)',
+    schoolLabel: 'Мектеп',
+    selectSchool: '-- Мектепті таңда --',
+    customSchool: 'Өз мектебі',
+    confirmPassword: 'Құпия сөзді растау',
+    haveAccount: 'Аккаунты бар ма?',
+    loginLink: 'Кіру',
+    errorInvalidEmail: '❌ Дұрыс емес пошта',
+    errorPasswordShort: '❌ Құпия сөз ең кем 8 символ',
+    errorPasswordMismatch: '❌ Құпия сөздер сәйкес емес',
+    errorEmailExists: '❌ Бұл пошта тіркелген',
+    errorFillAll: '❌ Барлық өрістерді толтыр',
+    errorLogin: '❌ Дұрыс емес пошта немесе құпия сөз',
+    successLogin: '✅ Қош келдіңіз! Жүктеу...',
+    successRegister: '✅ Аккаунт жасалды! Ауысады...',
+    errorRegister: '❌ Тіркелу қатесі'
+  }
+};
+
+let currentLang = localStorage.getItem('teacherLang') || 'ru';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('teacherLang', lang);
+  document.querySelectorAll('[data-lang-key]').forEach(el => {
+    const key = el.getAttribute('data-lang-key');
+    el.textContent = translations[lang][key] || key;
+  });
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('on'));
+  event.target.classList.add('on');
+  loadSchools();
+}
+
+// ===== UI FUNCTIONS =====
+function switchTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(tab + 'Screen').classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  clearMessages();
+}
+
+function showMessage(msg, type) {
+  const msgEl = document.querySelector('.' + type + 'Msg');
+  msgEl.textContent = msg;
+  msgEl.classList.add('show');
+  setTimeout(() => msgEl.classList.remove('show'), 3000);
+}
+
+function clearMessages() {
+  document.querySelectorAll('.msg').forEach(m => {
+    m.classList.remove('show');
+    m.textContent = '';
+  });
+}
+
+function setButtonLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.classList.toggle('ld', loading);
+}
+
+// ===== SCHOOLS LOADING =====
+async function loadSchools() {
+  try {
+    document.getElementById('schoolsLoading').style.display = 'block';
+    const select = document.getElementById('regSchool');
+    
+    // Предварительная загрузка популярных школ
+    const schools = [
+      'СШ №1 г. Астана',
+      'СШ №2 г. Алматы',
+      'СШ №3 г. Almaty',
+      'Лицей "IT Park"',
+      'Лицей имени В.В.Маяковского',
+      'Международная школа NUrica'
+    ];
+    
+    // Загружаем из Supabase если возможно
+    if (window.sb) {
+      const { data, error } = await sb.from('schools').select('*').limit(50);
+      if (data) {
+        schools.push(...data.map(s => s.name || s.school_name));
+      }
+    }
+    
+    const unique = [...new Set(schools)];
+    select.innerHTML = '<option value="">-- ' + (currentLang === 'ru' ? 'Выбери школу' : 'Мектепті таңда') + ' --</option>';
+    unique.forEach(school => {
+      const opt = document.createElement('option');
+      opt.value = school;
+      opt.textContent = school;
+      select.appendChild(opt);
+    });
+    
+    const opt = document.createElement('option');
+    opt.value = 'custom';
+    opt.textContent = currentLang === 'ru' ? '+ Своя школа...' : '+ Өзге мектеп...';
+    select.appendChild(opt);
+    
+  } catch (err) {
+    console.log('Schools load error:', err);
+  } finally {
+    document.getElementById('schoolsLoading').style.display = 'none';
+  }
+}
+
+function selectSchool() {
+  const select = document.getElementById('regSchool');
+  const customDiv = document.getElementById('customSchoolDiv');
+  customDiv.style.display = select.value === 'custom' ? 'block' : 'none';
+}
+
+// ===== AUTH FUNCTIONS =====
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPass').value;
+  
+  if (!email || !password) {
+    showMessage(translations[currentLang].errorFillAll, 'err');
+    return;
+  }
+  
+  if (!email.includes('@')) {
+    showMessage(translations[currentLang].errorInvalidEmail, 'err');
+    return;
+  }
+  
+  setButtonLoading('loginBtn', true);
+  
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    
+    if (error) throw error;
+    
+    if (data.user) {
+      showMessage(translations[currentLang].successLogin, 'ok');
+      setTimeout(() => {
+        window.location.href = 'ecogame-teacher.html';
+      }, 1500);
+    }
+  } catch (err) {
+    showMessage(translations[currentLang].errorLogin, 'err');
+    console.error('Login error:', err.message);
+  } finally {
+    setButtonLoading('loginBtn', false);
+  }
+}
+
+async function handleRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPass').value;
+  const passConfirm = document.getElementById('regPassConfirm').value;
+  let school = document.getElementById('regSchool').value;
+  
+  if (!name || !email || !password || !school) {
+    showMessage(translations[currentLang].errorFillAll, 'err');
+    return;
+  }
+  
+  if (school === 'custom') {
+    school = document.getElementById('regCustomSchool').value.trim();
+    if (!school) {
+      showMessage(translations[currentLang].errorFillAll, 'err');
+      return;
+    }
+  }
+  
+  if (!email.includes('@')) {
+    showMessage(translations[currentLang].errorInvalidEmail, 'err');
+    return;
+  }
+  
+  if (password.length < 8) {
+    showMessage(translations[currentLang].errorPasswordShort, 'err');
+    return;
+  }
+  
+  if (password !== passConfirm) {
+    showMessage(translations[currentLang].errorPasswordMismatch, 'err');
+    return;
+  }
+  
+  setButtonLoading('registerBtn', true);
+  
+  try {
+    // Sign up
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+          school: school,
+          role: 'teacher'
+        }
+      }
+    });
+    
+    if (error) throw error;
+    
+    if (data.user) {
+      // Save teacher profile
+      const { error: profileError } = await sb.from('teachers').insert([{
+        user_id: data.user.id,
+        full_name: name,
+        email: email,
+        school: school,
+        status: 'active'
+      }]);
+      
+      if (profileError) console.error('Profile error:', profileError);
+      
+      showMessage(translations[currentLang].successRegister, 'ok');
+      setTimeout(() => {
+        window.location.href = 'ecogame-teacher.html';
+      }, 1500);
+    }
+  } catch (err) {
+    console.error('Register error:', err);
+    if (err.message.includes('User already registered')) {
+      showMessage(translations[currentLang].errorEmailExists, 'err');
+    } else {
+      showMessage(translations[currentLang].errorRegister, 'err');
+    }
+  } finally {
+    setButtonLoading('registerBtn', false);
+  }
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  setLang(currentLang);
+});
+</script>
+</body>
+</html>

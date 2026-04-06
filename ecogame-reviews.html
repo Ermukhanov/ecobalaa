@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoGame — Отзывы</title>
+<link rel="icon" href="iconca.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase2.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g:#1B5E20;--gm:#2E7D32;--gl:#4CAF50;
+  --bg:#F0FBF0;--card:#fff;--border:#C8E6C9;
+  --text:#0f172a;--muted:#64748b;
+}
+body{font-family:'Nunito','Noto Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── HEADER ── */
+header{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(46,125,50,0.08);}
+.hi{max-width:1000px;margin:0 auto;height:58px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;}
+.h-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.h-logo-img{width:32px;height:32px;border-radius:9px;object-fit:cover;}
+.h-brand{font-size:16px;font-weight:900;color:var(--g);}
+.h-badge{background:linear-gradient(135deg,var(--g),var(--gl));color:#fff;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:900;}
+.lsw{display:flex;background:#E8F5E9;border-radius:20px;padding:3px;}
+.lb{padding:4px 12px;border-radius:17px;border:none;background:transparent;font-size:11px;font-weight:800;cursor:pointer;color:var(--g);}
+.lb.on{background:var(--gm);color:#fff;}
+.back-btn{padding:7px 14px;border-radius:11px;background:#F1F8F2;border:1.5px solid var(--border);color:var(--g);font-size:13px;font-weight:800;text-decoration:none;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,#0D2818,#1B5E20,#2E7D32);padding:48px 20px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:rgba(76,175,80,0.15);border-radius:50%;}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-60px;width:300px;height:300px;background:rgba(129,199,132,0.12);border-radius:50%;}
+.hero-inner{position:relative;z-index:1;}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:99px;padding:6px 16px;color:#fff;font-size:12px;font-weight:800;margin-bottom:16px;letter-spacing:.5px;}
+.hero-title{font-size:clamp(28px,5vw,42px);font-weight:900;color:#fff;margin-bottom:10px;text-shadow:0 4px 20px rgba(0,0,0,0.3);}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.78);font-weight:600;margin-bottom:28px;}
+/* stats row */
+.stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-size:32px;font-weight:900;color:#A5D6A7;}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,0.7);font-weight:700;}
+/* avg stars */
+.avg-stars{display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:24px;}
+.avg-star{font-size:28px;}
+.avg-num{font-size:36px;font-weight:900;color:#FFD700;text-shadow:0 2px 8px rgba(0,0,0,0.2);}
+
+/* ── FILTERS ── */
+.filters{max-width:1000px;margin:0 auto;padding:20px 20px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.filter-btn{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito';font-size:13px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .2s;}
+.filter-btn.on{background:var(--gm);color:#fff;border-color:var(--gm);}
+.filter-sep{height:20px;width:1px;background:var(--border);}
+.sort-sel{padding:8px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito';font-size:13px;font-weight:700;color:var(--text);outline:none;cursor:pointer;}
+
+/* ── GRID ── */
+.main{max-width:1000px;margin:0 auto;padding:20px;}
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+
+/* ── REVIEW CARD ── */
+.rev-card{background:var(--card);border-radius:20px;border:1.5px solid var(--border);padding:20px;box-shadow:0 4px 16px rgba(46,125,50,0.06);transition:all .25s;animation:cardIn .4s ease both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.rev-card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(46,125,50,0.12);border-color:#A5D6A7;}
+.rev-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.rev-user{display:flex;align-items:center;gap:10px;}
+.rev-avatar{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#E8F5E9,#C8E6C9);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid var(--border);}
+.rev-name{font-size:14px;font-weight:900;color:var(--text);}
+.rev-date{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px;}
+.rev-stars{display:flex;gap:2px;}
+.rev-star{font-size:14px;}
+.rev-comment{font-size:14px;color:#334155;font-weight:600;line-height:1.65;margin-bottom:12px;}
+.rev-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#E8F5E9;border-radius:99px;font-size:11px;font-weight:800;color:var(--g);}
+.rev-helpful{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;}
+.helpful-btn{background:none;border:none;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:4px;padding:4px 8px;border-radius:8px;transition:all .2s;font-family:'Nunito';}
+.helpful-btn:hover{background:#E8F5E9;color:var(--g);}
+.helpful-btn.liked{color:var(--g);background:#E8F5E9;}
+
+/* ── FEATURED REVIEW ── */
+.featured{background:linear-gradient(135deg,#E8F5E9,#F0FBF0);border-color:#A5D6A7;position:relative;}
+.featured::before{content:'⭐ Лучший отзыв';position:absolute;top:-1px;right:16px;background:linear-gradient(135deg,#1B5E20,#43A047);color:#fff;font-size:10px;font-weight:900;padding:3px 10px;border-radius:0 0 10px 10px;letter-spacing:.5px;}
+
+/* ── WRITE REVIEW ── */
+.write-rev{background:linear-gradient(160deg,#1B5E20,#2E7D32);border-radius:24px;padding:28px;margin-bottom:24px;color:#fff;}
+.wr-title{font-size:18px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.wr-stars{display:flex;gap:10px;margin-bottom:16px;justify-content:center;}
+.wr-star{font-size:36px;cursor:pointer;transition:transform .2s;filter:grayscale(1);}
+.wr-star.on{filter:none;transform:scale(1.15);}
+.wr-inp{width:100%;padding:12px 14px;border-radius:12px;border:none;font-family:'Nunito';font-size:14px;font-weight:600;outline:none;margin-bottom:10px;resize:none;background:rgba(255,255,255,0.95);color:var(--text);}
+.wr-row{display:flex;gap:10px;}
+.wr-nick{flex:1;padding:11px 14px;border-radius:12px;border:none;font-family:'Nunito';font-size:14px;font-weight:600;outline:none;background:rgba(255,255,255,0.95);color:var(--text);}
+.wr-btn{padding:11px 22px;border-radius:12px;border:none;background:#fff;color:var(--g);font-family:'Nunito';font-size:14px;font-weight:900;cursor:pointer;transition:all .2s;}
+.wr-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.15);}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-emoji{font-size:48px;margin-bottom:12px;}
+.empty-text{font-size:15px;font-weight:700;}
+
+/* ── LOADING ── */
+.loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.skel{background:linear-gradient(90deg,#f0f4f0 25%,#e8f0e8 50%,#f0f4f0 75%);background-size:400% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:20px;height:160px;}
+@keyframes shimmer{0%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:24px;flex-wrap:wrap;}
+.page-btn{padding:8px 16px;border-radius:12px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito';font-size:13px;font-weight:800;cursor:pointer;color:var(--muted);transition:all .2s;}
+.page-btn.on{background:var(--gm);color:#fff;border-color:var(--gm);}
+.page-btn:hover:not(.on){background:#E8F5E9;}
+
+@media(max-width:560px){
+  .stats{gap:16px;}.stat-num{font-size:24px;}
+  .hero{padding:32px 16px;}.hero-title{font-size:26px;}
+  .filters{padding:16px 16px 0;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hi">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <a href="index.html" class="back-btn" id="backBtn">← <span id="backLbl">Главная</span></a>
+      <a href="index.html" class="h-logo">
+        <img src="iconca.jpg" class="h-logo-img" alt="EcoBala">
+        <span class="h-brand">EcoBala</span>
+      </a>
+      <span class="h-badge">🎮 EcoGame</span>
+    </div>
+    <div class="lsw">
+      <button class="lb on" data-l="ru">РУС</button>
+      <button class="lb" data-l="kz">ҚАЗ</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-chip" id="heroChip">🌟 Отзывы игроков</div>
+    <h1 class="hero-title" id="heroTitle">Что говорят об EcoGame?</h1>
+    <p class="hero-sub" id="heroSub">Честные отзывы учеников после игры</p>
+    <div class="avg-stars" id="avgStars"></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="totalRevs">0</div><div class="stat-lbl" id="totalRevsLbl">отзывов</div></div>
+      <div class="stat"><div class="stat-num" id="avgRating">0.0</div><div class="stat-lbl" id="avgRatingLbl">средняя оценка</div></div>
+      <div class="stat"><div class="stat-num" id="pct5star">0%</div><div class="stat-lbl" id="pct5Lbl">5 звёзд</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn on" data-filter="all" id="fAll">Все</button>
+  <button class="filter-btn" data-filter="5" id="f5">⭐⭐⭐⭐⭐</button>
+  <button class="filter-btn" data-filter="4" id="f4">⭐⭐⭐⭐</button>
+  <button class="filter-btn" data-filter="3" id="f3">⭐⭐⭐</button>
+  <div class="filter-sep"></div>
+  <select class="sort-sel" id="sortSel" onchange="changeSort(this.value)">
+    <option value="new" id="sortNew">Сначала новые</option>
+    <option value="top" id="sortTop">По оценке</option>
+  </select>
+</div>
+
+<div class="main">
+  <!-- write review -->
+  <div class="write-rev">
+    <div class="wr-title" id="wrTitle">✏️ Написать отзыв</div>
+    <div class="wr-stars" id="wrStars"></div>
+    <textarea class="wr-inp" id="wrComment" rows="3" placeholder="Поделись впечатлениями об EcoGame..."></textarea>
+    <div class="wr-row">
+      <input class="wr-nick" id="wrNick" type="text" placeholder="Твой никнейм" maxlength="30">
+      <button class="wr-btn" onclick="submitPublicReview()" id="wrBtn">Опубликовать</button>
+    </div>
+  </div>
+
+  <!-- reviews grid -->
+  <div id="reviewsGrid" class="reviews-grid"></div>
+  <div id="pagination" class="pagination"></div>
+</div>
+
+<script>
+const T={
+  ru:{
+    back:'Главная',chip:'🌟 Отзывы игроков',title:'Что говорят об EcoGame?',sub:'Честные отзывы учеников после игры',
+    totalRevs:'отзывов',avgRating:'средняя оценка',pct5:'5 звёзд',
+    all:'Все',sortNew:'Сначала новые',sortTop:'По оценке',
+    wrTitle:'✏️ Написать отзыв',wrBtn:'Опубликовать',wrPh:'Поделись впечатлениями об EcoGame...',wrNickPh:'Твой никнейм',
+    helpful:'Полезно',ago:'назад',min:'мин.',hour:'ч.',day:'д.',
+    noRev:'Пока нет отзывов. Будьте первым!',
+    thanks:'Спасибо за отзыв! 🌟',published:'Опубликовано!',errRate:'Выбери оценку!',
+  },
+  kz:{
+    back:'Басты бет',chip:'🌟 Ойыншылар пікірлері',title:'EcoGame туралы не айтады?',sub:'Ойыншылардың шынайы пікірлері',
+    totalRevs:'пікір',avgRating:'орташа баға',pct5:'5 жұлдыз',
+    all:'Барлығы',sortNew:'Алдымен жаңалар',sortTop:'Бағалау бойынша',
+    wrTitle:'✏️ Пікір жазу',wrBtn:'Жариялау',wrPh:'EcoGame туралы пікіріңізді бөлісіңіз...',wrNickPh:'Лақап атыңыз',
+    helpful:'Пайдалы',ago:'бұрын',min:'мин.',hour:'сағ.',day:'күн.',
+    noRev:'Пікірлер жоқ. Алғашқы болыңыз!',
+    thanks:'Пікіріңізге рахмет! 🌟',published:'Жарияланды!',errRate:'Бағалауды таңдаңыз!',
+  }
+};
+let lang=localStorage.getItem('selectedLanguage')||'ru';
+function t(k){return T[lang][k]||k;}
+function setLang(l){lang=l;localStorage.setItem('selectedLanguage',l);document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.dataset.l===l));applyT();loadReviews();}
+function applyT(){
+  document.getElementById('backLbl').textContent=t('back');
+  document.getElementById('heroChip').textContent=t('chip');
+  document.getElementById('heroTitle').textContent=t('title');
+  document.getElementById('heroSub').textContent=t('sub');
+  document.getElementById('totalRevsLbl').textContent=t('totalRevs');
+  document.getElementById('avgRatingLbl').textContent=t('avgRating');
+  document.getElementById('pct5Lbl').textContent=t('pct5');
+  document.getElementById('fAll').textContent=t('all');
+  document.getElementById('wrTitle').textContent=t('wrTitle');
+  document.getElementById('wrBtn').textContent=t('wrBtn');
+  document.getElementById('wrComment').placeholder=t('wrPh');
+  document.getElementById('wrNick').placeholder=t('wrNickPh');
+  document.getElementById('sortNew').textContent=t('sortNew');
+  document.getElementById('sortTop').textContent=t('sortTop');
+}
+document.querySelectorAll('.lb').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
+
+// ══ FILTERS ══
+let activeFilter='all', sortMode='new', currentPage=1;
+const PAGE_SIZE=12;
+document.querySelectorAll('.filter-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    activeFilter=b.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    currentPage=1;
+    loadReviews();
+  });
+});
+function changeSort(v){sortMode=v;currentPage=1;loadReviews();}
+
+// ══ WRITE REVIEW ══
+let wrRating=0;
+function initWriteStars(){
+  const el=document.getElementById('wrStars');
+  el.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');
+    s.className='wr-star'+(i<=wrRating?' on':'');
+    s.textContent='⭐';
+    s.onclick=()=>{wrRating=i;[...el.children].forEach((x,xi)=>x.classList.toggle('on',xi<i));};
+    el.appendChild(s);
+  }
+}
+initWriteStars();
+
+async function getSb(){if(typeof EcoBalaAuth!=='undefined'&&EcoBalaAuth.supabase)return EcoBalaAuth.supabase;return null;}
+
+async function submitPublicReview(){
+  if(!wrRating){alert(t('errRate'));return;}
+  const nick=document.getElementById('wrNick').value.trim()||'Аноним';
+  const comment=document.getElementById('wrComment').value.trim();
+  const saved=JSON.parse(localStorage.getItem('ecogame-participant')||'{}');
+  try{
+    const sb=await getSb();
+    if(sb) await sb.from('ecogame_reviews').insert({
+      nickname:nick,avatar_emoji:saved.emoji||'🌱',
+      rating:wrRating,comment,is_public:true,platform:'ecogame'
+    });
+  }catch(e){}
+  document.getElementById('wrComment').value='';
+  document.getElementById('wrNick').value='';
+  wrRating=0;initWriteStars();
+  showToast(t('thanks'));
+  setTimeout(()=>loadReviews(),500);
+}
+
+// ══ TOAST ══
+function showToast(msg){
+  let el=document.getElementById('toast');
+  if(!el){el=document.createElement('div');el.id='toast';el.style.cssText='position:fixed;bottom:24px;right:24px;background:#1B5E20;color:#fff;padding:12px 20px;border-radius:14px;font-size:14px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:999;transition:all .3s;';document.body.appendChild(el);}
+  el.textContent=msg;el.style.opacity='1';el.style.transform='none';
+  setTimeout(()=>{el.style.opacity='0';},2500);
+}
+
+// ══ LOAD REVIEWS ══
+let allReviews=[];
+async function loadReviews(){
+  const grid=document.getElementById('reviewsGrid');
+  grid.innerHTML=`<div style="grid-column:1/-1;"><div class="loading-grid">${Array(6).fill('<div class="skel"></div>').join('')}</div></div>`;
+  try{
+    const sb=await getSb();
+    if(!sb){ renderDemoReviews(); return; }
+    let q=sb.from('ecogame_reviews').select('*').eq('is_public',true);
+    if(activeFilter!=='all') q=q.eq('rating',parseInt(activeFilter));
+    if(sortMode==='top') q=q.order('rating',{ascending:false}).order('created_at',{ascending:false});
+    else q=q.order('created_at',{ascending:false});
+    const {data}=await q.limit(200);
+    allReviews=data||[];
+    renderStats(allReviews);
+    renderGrid(allReviews);
+  }catch(e){ renderDemoReviews(); }
+}
+
+function renderStats(revs){
+  const total=revs.length;
+  const avg=total?revs.reduce((a,r)=>a+r.rating,0)/total:0;
+  const five=total?Math.round(revs.filter(r=>r.rating===5).length/total*100):0;
+  document.getElementById('totalRevs').textContent=total;
+  document.getElementById('avgRating').textContent=avg.toFixed(1);
+  document.getElementById('pct5star').textContent=five+'%';
+  // avg stars display
+  const el=document.getElementById('avgStars');
+  el.innerHTML=`<span class="avg-num">${avg.toFixed(1)}</span>`+
+    Array.from({length:5},(_,i)=>`<span class="avg-star" style="filter:${i<Math.round(avg)?'none':'grayscale(1) brightness(1.5)'}">⭐</span>`).join('');
+}
+
+function renderGrid(revs){
+  const start=(currentPage-1)*PAGE_SIZE;
+  const page=revs.slice(start,start+PAGE_SIZE);
+  const grid=document.getElementById('reviewsGrid');
+  if(!revs.length){
+    grid.innerHTML=`<div style="grid-column:1/-1;" class="empty"><div class="empty-emoji">🌱</div><div class="empty-text">${t('noRev')}</div></div>`;
+    document.getElementById('pagination').innerHTML='';
+    return;
+  }
+  grid.innerHTML=page.map((r,i)=>buildCard(r,i)).join('');
+  buildPagination(revs.length);
+}
+
+function buildCard(r,i){
+  const featured=r.rating===5&&i===0;
+  const stars=Array.from({length:5},(_,si)=>`<span class="rev-star" style="filter:${si<r.rating?'none':'grayscale(1) brightness(1.3)'}">⭐</span>`).join('');
+  const date=new Date(r.created_at);
+  const diff=Math.floor((Date.now()-date)/1000);
+  const ago=diff<3600?Math.floor(diff/60)+' '+t('min'):diff<86400?Math.floor(diff/3600)+' '+t('hour'):Math.floor(diff/86400)+' '+t('day');
+  return `
+    <div class="rev-card${featured?' featured':''}" style="animation-delay:${i*0.04}s">
+      <div class="rev-top">
+        <div class="rev-user">
+          <div class="rev-avatar">${r.avatar_emoji||'🌱'}</div>
+          <div>
+            <div class="rev-name">${r.nickname||'Аноним'}</div>
+            <div class="rev-date">${ago} ${t('ago')}</div>
+          </div>
+        </div>
+        <div class="rev-stars">${stars}</div>
+      </div>
+      ${r.comment?`<div class="rev-comment">"${r.comment}"</div>`:''}
+      <div>
+        <span class="rev-tag">🎮 EcoGame</span>
+      </div>
+      <div class="rev-helpful">
+        <button class="helpful-btn" onclick="this.classList.toggle('liked');this.querySelector('.hc').textContent=parseInt(this.querySelector('.hc').textContent)+(this.classList.contains('liked')?1:-1)">
+          👍 <span class="hc">${Math.floor(Math.random()*8)}</span> ${t('helpful')}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function buildPagination(total){
+  const pages=Math.ceil(total/PAGE_SIZE);
+  if(pages<=1){document.getElementById('pagination').innerHTML='';return;}
+  let html='';
+  for(let i=1;i<=pages;i++){
+    html+=`<button class="page-btn${i===currentPage?' on':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  document.getElementById('pagination').innerHTML=html;
+}
+function goPage(p){currentPage=p;renderGrid(allReviews);window.scrollTo({top:document.querySelector('.main').offsetTop-70,behavior:'smooth'});}
+
+function renderDemoReviews(){
+  const demos=[
+    {id:1,nickname:'ЭкоГерой',avatar_emoji:'🦋',rating:5,comment:'Очень интересная игра! Учиться так намного веселее!',created_at:new Date(Date.now()-3600000).toISOString()},
+    {id:2,nickname:'Жасөспірім',avatar_emoji:'🌱',rating:5,comment:'EcoGame жаңа тақырыптарды оңай есте сақтауға көмектеседі',created_at:new Date(Date.now()-7200000).toISOString()},
+    {id:3,nickname:'Максим',avatar_emoji:'🐝',rating:4,comment:'Супер! Особенно нравятся вопросы с картинками',created_at:new Date(Date.now()-86400000).toISOString()},
+    {id:4,nickname:'АйгүлҚ',avatar_emoji:'🌸',rating:5,comment:'Командалық ойын өте ынтымақтастықты дамытады!',created_at:new Date(Date.now()-172800000).toISOString()},
+    {id:5,nickname:'Данияр',avatar_emoji:'🌳',rating:5,comment:'Я выиграл 1-е место! Теперь у меня 100 дополнительных баллов!',created_at:new Date(Date.now()-259200000).toISOString()},
+    {id:6,nickname:'Айдос',avatar_emoji:'🔥',rating:4,comment:'Весело и полезно. Хочу ещё больше вопросов по экологии!',created_at:new Date(Date.now()-345600000).toISOString()},
+  ];
+  allReviews=demos;
+  renderStats(demos);
+  renderGrid(demos);
+}
+
+// ══ INIT ══
+applyT();
+loadReviews();
+</script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoGame — Играем!</title>
+<link rel="icon" href="iconca.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase2.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0D1B0E;--card:rgba(255,255,255,.97);}
+body{font-family:'Nunito','Noto Sans',sans-serif;min-height:100vh;background:var(--bg);color:#fff;overflow:hidden;position:relative;}
+
+/* ── BG ANIMATED ── */
+.bg-anim{position:fixed;inset:0;z-index:0;overflow:hidden;}
+.bg-circle{position:absolute;border-radius:50%;filter:blur(60px);animation:drift 8s ease-in-out infinite;}
+.c1{width:500px;height:500px;background:rgba(46,125,50,0.4);top:-200px;left:-100px;animation-delay:0s;}
+.c2{width:400px;height:400px;background:rgba(27,94,32,0.3);bottom:-150px;right:-100px;animation-delay:-4s;}
+.c3{width:300px;height:300px;background:rgba(76,175,80,0.2);top:40%;left:50%;animation-delay:-2s;}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-20px)}}
+
+/* ── HEADER ── */
+.game-header{position:relative;z-index:10;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.gh-score{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:8px 16px;font-size:15px;font-weight:900;}
+.gh-nick{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;}
+.gh-q{background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:8px 14px;font-size:13px;font-weight:800;}
+
+/* ── SCREENS ── */
+.screen{display:none;position:relative;z-index:5;height:calc(100vh - 60px);overflow-y:auto;padding:16px;}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;}
+
+/* ── WAITING SCREEN ── */
+.wait-card{background:rgba(255,255,255,0.1);backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,0.2);border-radius:28px;padding:40px 32px;text-align:center;max-width:340px;width:100%;}
+.wait-big-emoji{font-size:70px;margin-bottom:16px;animation:bounce 1.5s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.wait-title{font-size:22px;font-weight:900;margin-bottom:8px;}
+.wait-sub{font-size:14px;opacity:.75;font-weight:600;line-height:1.6;}
+.dots{display:inline-block;}
+.dots::after{content:'.';animation:dots 1.5s steps(3,end) infinite;}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}100%{content:'.'}}
+
+/* ── QUESTION ── */
+.q-screen{padding:16px;width:100%;}
+/* timer bar */
+.timer-bar-wrap{width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:99px;margin-bottom:16px;overflow:hidden;}
+.timer-bar{height:100%;background:linear-gradient(90deg,#4CAF50,#A5D6A7);border-radius:99px;transition:width 1s linear,background .3s;}
+/* question card */
+.q-card{background:rgba(255,255,255,0.95);color:#0f172a;border-radius:20px;padding:20px;margin-bottom:14px;text-align:center;}
+.q-num{font-size:12px;font-weight:800;color:#64748b;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;}
+.q-text{font-size:18px;font-weight:800;line-height:1.4;margin-bottom:10px;}
+.q-media img{max-width:100%;max-height:180px;border-radius:12px;object-fit:contain;margin-top:8px;}
+.q-media video{max-width:100%;max-height:180px;border-radius:12px;}
+.timer-num-big{font-size:28px;font-weight:900;margin-top:10px;}
+/* options */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.opt-btn{padding:16px 14px;border-radius:18px;border:none;cursor:pointer;font-family:'Nunito';font-size:15px;font-weight:800;display:flex;align-items:center;gap:10px;transition:all .15s;color:#fff;position:relative;overflow:hidden;}
+.opt-btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s;}
+.opt-btn:not(.answered):hover::before{background:rgba(255,255,255,0.15);}
+.opt-btn:not(.answered):active{transform:scale(0.96);}
+.opt-btn.answered{cursor:default;}
+.opt-btn.correct{ring:3px solid #fff;}
+.opt-btn.wrong{opacity:0.5;}
+.opt-btn.correct::after{content:'✓';position:absolute;right:12px;font-size:20px;}
+.opt-btn.wrong::after{content:'✗';position:absolute;right:12px;font-size:20px;}
+.opt-a{background:linear-gradient(135deg,#e74c3c,#c0392b);}
+.opt-b{background:linear-gradient(135deg,#3498db,#2980b9);}
+.opt-c{background:linear-gradient(135deg,#f39c12,#e67e22);}
+.opt-d{background:linear-gradient(135deg,#27ae60,#229954);}
+.opt-shape{font-size:20px;flex-shrink:0;}
+
+/* ── FEEDBACK overlay ── */
+.feedback{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;animation:fbIn .3s ease;}
+@keyframes fbIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.fb-card{padding:32px 40px;border-radius:28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.fb-card.ok{background:linear-gradient(135deg,#1B5E20,#43A047);}
+.fb-card.no{background:linear-gradient(135deg,#B71C1C,#E53935);}
+.fb-emoji{font-size:60px;margin-bottom:10px;}
+.fb-title{font-size:24px;font-weight:900;color:#fff;margin-bottom:6px;}
+.fb-pts{font-size:18px;font-weight:900;color:rgba(255,255,255,.85);}
+.fb-time{font-size:13px;color:rgba(255,255,255,.65);margin-top:4px;}
+
+/* ── RESULTS ── */
+.res-wrap{width:100%;max-width:400px;}
+.podium-card{background:linear-gradient(160deg,rgba(27,94,32,0.9),rgba(46,125,50,0.8));backdrop-filter:blur(20px);border:1.5px solid rgba(255,255,255,0.2);border-radius:28px;padding:28px;text-align:center;margin-bottom:16px;}
+.my-rank{font-size:14px;font-weight:800;opacity:.8;margin-bottom:8px;}
+.my-score-big{font-size:52px;font-weight:900;line-height:1;}
+.my-pts-lbl{font-size:14px;opacity:.7;margin-bottom:16px;}
+.badge-award{background:rgba(255,255,255,0.15);border-radius:16px;padding:12px 20px;font-size:14px;font-weight:800;}
+.lb-list{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:20px;overflow:hidden;}
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.lb-row:last-child{border:none;}
+.lb-row.me{background:rgba(255,255,255,0.15);}
+.lb-rank{width:28px;font-size:13px;font-weight:900;text-align:center;}
+.lb-emoji{font-size:20px;}
+.lb-name{flex:1;font-size:14px;font-weight:800;}
+.lb-pts{font-size:15px;font-weight:900;}
+
+.review-card{background:rgba(255,255,255,0.95);color:#0f172a;border-radius:20px;padding:20px;margin-top:14px;}
+.review-title{font-size:16px;font-weight:900;margin-bottom:14px;text-align:center;}
+.stars{display:flex;justify-content:center;gap:8px;margin-bottom:14px;}
+.star{font-size:32px;cursor:pointer;transition:transform .2s;}
+.star.on{transform:scale(1.2);}
+.rev-input{width:100%;padding:10px 12px;border-radius:12px;border:2px solid #e2e8f0;font-family:'Nunito';font-size:14px;font-weight:600;outline:none;resize:none;}
+.rev-input:focus{border-color:#4CAF50;}
+.rev-btn{width:100%;padding:13px;border-radius:13px;border:none;background:linear-gradient(135deg,#1B5E20,#43A047);color:#fff;font-family:'Nunito';font-size:15px;font-weight:900;cursor:pointer;margin-top:10px;}
+
+@media(max-width:380px){.opts{grid-template-columns:1fr;}.opt-btn{padding:14px;}}
+</style>
+</head>
+<body>
+<div class="bg-anim">
+  <div class="bg-circle c1"></div>
+  <div class="bg-circle c2"></div>
+  <div class="bg-circle c3"></div>
+</div>
+
+<div class="game-header" id="gameHeader">
+  <div class="gh-nick" id="ghNick">🌱 —</div>
+  <div class="gh-q" id="ghQ">— / —</div>
+  <div class="gh-score" id="ghScore">⭐ 0</div>
+</div>
+
+<!-- ══ WAITING ══ -->
+<div class="screen active" id="s-wait">
+  <div class="wait-card">
+    <div class="wait-big-emoji" id="wEmoji">🌱</div>
+    <div class="wait-title" id="wTitle">Ты в игре!</div>
+    <div class="wait-sub" id="wSub">Ждём, пока учитель начнёт<div class="dots"></div></div>
+  </div>
+</div>
+
+<!-- ══ QUESTION ══ -->
+<div class="screen" id="s-question">
+  <div class="q-screen" style="width:100%;max-width:480px;">
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar" style="width:100%"></div></div>
+    <div class="q-card">
+      <div class="q-num" id="qNum">ВОПРОС 1</div>
+      <div class="q-text" id="qText">...</div>
+      <div class="q-media" id="qMedia"></div>
+      <div class="timer-num-big" id="timerNum">20</div>
+    </div>
+    <div class="opts" id="optsContainer"></div>
+  </div>
+</div>
+
+<!-- ══ RESULTS ══ -->
+<div class="screen" id="s-results" style="padding:16px;overflow-y:auto;height:calc(100vh - 60px);">
+  <div class="res-wrap">
+    <div class="podium-card" id="myResultCard"></div>
+    <div class="lb-list" id="lbList"></div>
+    <div class="review-card" id="reviewCard">
+      <div class="review-title" id="revTitle">🌟 Как тебе EcoGame?</div>
+      <div class="stars" id="stars"></div>
+      <textarea class="rev-input" id="revComment" rows="3" placeholder="Напиши отзыв..."></textarea>
+      <button class="rev-btn" onclick="submitReview()" id="revBtn">Отправить отзыв ✉️</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ STATE ══
+const params = new URLSearchParams(location.search);
+const roomId = params.get('room');
+const partId = params.get('pid');
+const saved = JSON.parse(localStorage.getItem('ecogame-participant')||'{}');
+const myNick = saved.nick || 'Игрок';
+const myEmoji = saved.emoji || '🌱';
+let myScore = 0;
+let currentQIdx = 0;
+let totalQ = 0;
+let hasAnswered = false;
+let timerInt = null;
+let pollInt = null;
+let timeLeft = 0;
+let currentQId = null;
+let currentTimeSec = 20;
+let qStartMs = Date.now();
+let reviewRating = 5;
+
+// ══ HEADER ══
+document.getElementById('ghNick').textContent = myEmoji + ' ' + myNick;
+document.getElementById('wEmoji').textContent = myEmoji;
+
+function updateHeader(){
+  document.getElementById('ghScore').textContent = '⭐ ' + myScore;
+  document.getElementById('ghQ').textContent = `${currentQIdx+1}/${totalQ||'?'}`;
+}
+
+// ══ SUPABASE ══
+async function getSb(){if(typeof EcoBalaAuth!=='undefined'&&EcoBalaAuth.supabase)return EcoBalaAuth.supabase;return null;}
+
+// ══ TRANSLATIONS ══
+const T={
+  ru:{wait:'Ты в игре!',waitSub:'Ждём, пока учитель начнёт',q:'ВОПРОС',correct:'Правильно! 🎉',wrong:'Неверно 😔',pts:'+{n} очков',noPts:'Без очков',tooslow:'Время вышло ⏱',revTitle:'🌟 Как тебе EcoGame?',revBtn:'Отправить отзыв ✉️',revPlaceholder:'Напиши отзыв...',revThanks:'Спасибо за отзыв! 🌟',place:'место',myScore:'Мои очки',},
+  kz:{wait:'Сен ойындасың!',waitSub:'Мұғалімнің бастауын күтеміз',q:'СҰРАҚ',correct:'Дұрыс! 🎉',wrong:'Дұрыс емес 😔',pts:'+{n} ұпай',noPts:'Ұпайсыз',tooslow:'Уақыт бітті ⏱',revTitle:'🌟 EcoGame ұнады ма?',revBtn:'Пікір жіберу ✉️',revPlaceholder:'Пікір жазыңыз...',revThanks:'Пікіріңізге рахмет! 🌟',place:'орын',myScore:'Менің ұпайларым',}
+};
+const lang=localStorage.getItem('selectedLanguage')||'ru';
+function t(k){return T[lang][k]||k;}
+
+// ══ SHOW SCREEN ══
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// ══ POLL FOR GAME STATE ══
+let lastQIdx=-1;
+async function pollGame(){
+  const sb=await getSb();
+  if(!sb) return;
+  try{
+    const {data:room}=await sb.from('ecogame_rooms').select('*').eq('id',roomId).single();
+    if(!room) return;
+    if(room.status==='finished'){ clearInterval(pollInt); loadResults(); return; }
+    if(room.status==='active'){
+      totalQ = await getQCount(sb);
+      updateHeader();
+      if(room.current_q!==lastQIdx){
+        lastQIdx=room.current_q;
+        currentQIdx=room.current_q;
+        hasAnswered=false;
+        await loadQuestion(sb,room);
+      }
+    }
+    // update my score from server
+    if(partId&&partId!=='demo'){
+      const {data:me}=await sb.from('ecogame_participants').select('score').eq('id',partId).single();
+      if(me){ myScore=me.score; document.getElementById('ghScore').textContent='⭐ '+myScore; }
+    }
+  }catch(e){}
+}
+
+async function getQCount(sb){
+  const {count}=await sb.from('ecogame_questions').select('*',{count:'exact',head:true}).eq('room_id',roomId);
+  return count||0;
+}
+
+// ══ LOAD QUESTION ══
+async function loadQuestion(sb,room){
+  clearInterval(timerInt);
+  const {data:questions}=await sb.from('ecogame_questions')
+    .select('*,ecogame_options(*)')
+    .eq('room_id',roomId).order('position').range(room.current_q,room.current_q);
+  if(!questions||!questions.length) return;
+  const q=questions[0];
+  currentQId=q.id;
+  currentTimeSec=q.time_sec||20;
+  qStartMs=room.q_started_at?new Date(room.q_started_at).getTime():Date.now();
+  showScreen('s-question');
+  renderQuestion(q);
+}
+
+function renderQuestion(q){
+  const idx=currentQIdx;
+  document.getElementById('qNum').textContent=`${t('q')} ${idx+1}`;
+  document.getElementById('qText').textContent=q.question;
+  // media
+  const mEl=document.getElementById('qMedia');
+  if(q.media_url){
+    mEl.innerHTML=q.q_type==='video'
+      ?`<video src="${q.media_url}" style="max-width:100%;max-height:180px;border-radius:12px;" autoplay muted></video>`
+      :`<img src="${q.media_url}" alt="">`;
+  } else mEl.innerHTML='';
+  // options
+  const opts=(q.ecogame_options||[]).sort((a,b)=>a.position-b.position);
+  const colors=['opt-a','opt-b','opt-c','opt-d'];
+  const shapes=['▲','◼','●','✦'];
+  const container=document.getElementById('optsContainer');
+  container.innerHTML=opts.map((o,i)=>`
+    <button class="opt-btn ${colors[i]}" id="opt-${o.id}" onclick="selectAnswer('${o.id}','${o.is_correct}',${i})" data-correct="${o.is_correct}">
+      <span class="opt-shape">${shapes[i]}</span> ${o.text}
+    </button>
+  `).join('');
+  // timer
+  const elapsed=Math.floor((Date.now()-qStartMs)/1000);
+  timeLeft=Math.max(0,currentTimeSec-elapsed);
+  runTimer(timeLeft,currentTimeSec);
+}
+
+function runTimer(left,total){
+  clearInterval(timerInt);
+  timeLeft=left;
+  document.getElementById('timerNum').textContent=timeLeft;
+  document.getElementById('timerBar').style.width=(timeLeft/total*100)+'%';
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    document.getElementById('timerNum').textContent=Math.max(0,timeLeft);
+    const pct=Math.max(0,timeLeft/total);
+    const bar=document.getElementById('timerBar');
+    bar.style.width=(pct*100)+'%';
+    bar.style.background=pct>0.4?'linear-gradient(90deg,#4CAF50,#A5D6A7)':pct>0.2?'linear-gradient(90deg,#F59E0B,#FCD34D)':'linear-gradient(90deg,#ef4444,#f87171)';
+    if(timeLeft<=0){ clearInterval(timerInt); if(!hasAnswered) showFeedback(false,0,true); }
+  },1000);
+}
+
+// ══ ANSWER ══
+async function selectAnswer(optId, isCorrectStr, optIdx){
+  if(hasAnswered) return;
+  hasAnswered=true;
+  clearInterval(timerInt);
+  const isCorrect=isCorrectStr==='true';
+  const elapsed=Date.now()-qStartMs;
+  // calc points
+  let pts=0;
+  if(isCorrect){
+    const remaining=timeLeft/currentTimeSec;
+    pts=Math.max(500,Math.round(1000*(0.5+remaining*0.5)));
+    myScore+=pts;
+  }
+  // style buttons
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    const isCor=b.dataset.correct==='true';
+    b.classList.add('answered');
+    b.classList.add(isCor?'correct':'wrong');
+  });
+  // show feedback
+  showFeedback(isCorrect,pts,false);
+  // submit to db
+  try{
+    const sb=await getSb();
+    if(sb&&partId&&partId!=='demo'&&currentQId){
+      await sb.from('ecogame_answers').insert({
+        room_id:roomId,question_id:currentQId,participant_id:partId,
+        option_id:optId,is_correct:isCorrect,answered_in_ms:elapsed,points_earned:pts
+      });
+      await sb.from('ecogame_participants').update({score:myScore}).eq('id',partId);
+    }
+  }catch(e){}
+}
+
+function showFeedback(correct,pts,tooSlow){
+  const fb=document.createElement('div');
+  fb.className='feedback';
+  fb.innerHTML=`
+    <div class="fb-card ${correct?'ok':'no'}">
+      <div class="fb-emoji">${correct?'🎉':tooSlow?'⏱':'😔'}</div>
+      <div class="fb-title">${correct?t('correct'):tooSlow?t('tooslow'):t('wrong')}</div>
+      <div class="fb-pts">${correct?t('pts').replace('{n}',pts):t('noPts')}</div>
+    </div>
+  `;
+  document.body.appendChild(fb);
+  fb.onclick=()=>fb.remove();
+  setTimeout(()=>{if(fb.parentNode)fb.remove();},2500);
+  document.getElementById('ghScore').textContent='⭐ '+myScore;
+}
+
+// ══ RESULTS ══
+async function loadResults(){
+  clearInterval(pollInt);
+  showScreen('s-results');
+  try{
+    const sb=await getSb();
+    if(!sb){ showDemoResults(); return; }
+    const {data:lb}=await sb.from('ecogame_leaderboard').select('*').eq('room_id',roomId).order('rank');
+    const me=lb?.find(r=>r.participant_id===partId)||{rank:0,total_score:myScore,nickname:myNick,avatar_emoji:myEmoji,badge_points:0};
+    renderResults(lb||[],me);
+  }catch(e){ showDemoResults(); }
+}
+
+function renderResults(lb, me){
+  const bp=me.badge_points||0;
+  document.getElementById('myResultCard').innerHTML=`
+    <div style="font-size:40px;margin-bottom:10px;">${me.avatar_emoji||myEmoji}</div>
+    <div class="my-rank">${me.rank||'?'} ${t('place')}</div>
+    <div class="my-score-big">${me.total_score||myScore}</div>
+    <div class="my-pts-lbl">${t('myScore')}</div>
+    ${bp>0?`<div class="badge-award">🏅 +${bp} баллов в профиль!</div>`:''}
+  `;
+  document.getElementById('lbList').innerHTML=lb.slice(0,10).map((r,i)=>`
+    <div class="lb-row ${r.participant_id===partId?'me':''}">
+      <div class="lb-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="lb-emoji">${r.avatar_emoji||'🌱'}</div>
+      <div class="lb-name">${r.nickname}</div>
+      <div class="lb-pts">${r.total_score}</div>
+    </div>
+  `).join('');
+  // reviews
+  initReviews();
+}
+
+function showDemoResults(){
+  document.getElementById('myResultCard').innerHTML=`
+    <div style="font-size:40px;margin-bottom:10px;">${myEmoji}</div>
+    <div class="my-score-big">${myScore}</div>
+    <div class="my-pts-lbl">${t('myScore')}</div>
+  `;
+  document.getElementById('lbList').innerHTML='';
+  initReviews();
+}
+
+// ══ REVIEWS ══
+function initReviews(){
+  const starsEl=document.getElementById('stars');
+  starsEl.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');
+    s.className='star'+(i<=reviewRating?' on':'');
+    s.textContent='⭐';
+    s.onclick=()=>{reviewRating=i;[...starsEl.children].forEach((x,xi)=>x.classList.toggle('on',xi<i));};
+    starsEl.appendChild(s);
+  }
+  document.getElementById('revTitle').textContent=t('revTitle');
+  document.getElementById('revBtn').textContent=t('revBtn');
+  document.getElementById('revComment').placeholder=t('revPlaceholder');
+}
+
+async function submitReview(){
+  const comment=document.getElementById('revComment').value.trim();
+  try{
+    const sb=await getSb();
+    if(sb) await sb.from('ecogame_reviews').insert({
+      room_id:roomId,participant_id:partId||null,
+      nickname:myNick,avatar_emoji:myEmoji,
+      rating:reviewRating,comment,is_public:true
+    });
+  }catch(e){}
+  document.getElementById('reviewCard').innerHTML=`
+    <div style="text-align:center;padding:20px;">
+      <div style="font-size:40px;margin-bottom:10px;">🌟</div>
+      <div style="font-size:16px;font-weight:900;color:#1B5E20;">${t('revThanks')}</div>
+    </div>
+  `;
+}
+
+// ══ INIT ══
+(async function(){
+  if(!roomId){ showScreen('s-wait'); return; }
+  // start polling
+  pollInt=setInterval(pollGame,2000);
+  await pollGame();
+})();
+</script>
+</body>
+</html>

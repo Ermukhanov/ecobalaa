@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoBala - Выбор платформы</title>
+<link rel="icon" href="iconca.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:wght@400;600;700;800&display=swap&subset=cyrillic,cyrillic-ext" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito','Noto Sans',sans-serif;min-height:100vh;background:#F0FBF0;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;overflow:hidden;}
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.b1{width:500px;height:500px;background:rgba(46,125,50,0.09);top:-150px;right:-100px;}
+.b2{width:350px;height:350px;background:rgba(67,160,71,0.07);bottom:-100px;left:-80px;}
+.wrap{width:100%;max-width:520px;position:relative;z-index:1;}
+.hdr{text-align:center;margin-bottom:28px;}
+.logo-row{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:14px;}
+.logo-img{width:48px;height:48px;border-radius:13px;object-fit:cover;box-shadow:0 4px 14px rgba(46,125,50,0.2);}
+.logo-name{font-size:22px;font-weight:900;color:#1B5E20;}
+.h-title{font-size:22px;font-weight:900;color:#0f172a;margin-bottom:5px;}
+.h-sub{font-size:14px;color:#64748b;font-weight:600;}
+.card{background:#fff;border-radius:24px;padding:28px 24px;box-shadow:0 8px 40px rgba(46,125,50,0.1);border:1.5px solid rgba(46,125,50,0.1);}
+.lang-bar{display:flex;justify-content:flex-end;margin-bottom:22px;}
+.lsw{display:flex;background:#E8F5E9;border-radius:20px;padding:3px;}
+.lb{padding:5px 14px;border-radius:17px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:#1B5E20;transition:all .2s;}
+.lb.on{background:#2E7D32;color:#fff;}
+.platforms{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.platform-card{border-radius:18px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .2s;text-decoration:none;display:block;border:2px solid transparent;}
+.platform-card:hover{transform:translateY(-3px);}
+.pk{background:linear-gradient(160deg,#E3F2FD,#BBDEFB);border-color:#90CAF9;}
+.pk:hover{border-color:#1565C0;box-shadow:0 8px 24px rgba(21,101,192,0.15);}
+.pt{background:linear-gradient(160deg,#E8F5E9,#C8E6C9);border-color:#A5D6A7;}
+.pt:hover{border-color:#2E7D32;box-shadow:0 8px 24px rgba(46,125,50,0.15);}
+.p-img{width:56px;height:56px;border-radius:14px;object-fit:cover;margin:0 auto 12px;display:block;box-shadow:0 3px 10px rgba(0,0,0,0.15);}
+.p-name{font-size:16px;font-weight:900;margin-bottom:4px;}
+.pk .p-name{color:#1565C0;}
+.pt .p-name{color:#1B5E20;}
+.p-age{font-size:12px;font-weight:700;color:#64748b;margin-bottom:14px;}
+.p-btns{display:flex;flex-direction:column;gap:8px;}
+.p-btn{padding:9px 14px;border-radius:50px;border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;text-decoration:none;display:block;}
+.pk .p-btn-reg{background:#1565C0;color:#fff;}
+.pk .p-btn-login{background:rgba(21,101,192,0.1);color:#1565C0;}
+.pt .p-btn-reg{background:#2E7D32;color:#fff;}
+.pt .p-btn-login{background:rgba(46,125,50,0.1);color:#2E7D32;}
+.p-btn:hover{opacity:.88;transform:scale(1.02);}
+.teacher-row{text-align:center;padding-top:4px;}
+.teacher-link{font-size:13px;color:#64748b;font-weight:600;}
+.teacher-link a{color:#2E7D32;font-weight:800;text-decoration:none;}
+.teacher-link a:hover{text-decoration:underline;}
+.back-row{text-align:center;margin-top:16px;}
+.back-row a{font-size:13px;color:#64748b;text-decoration:none;font-weight:700;}
+@media(max-width:420px){.platforms{grid-template-columns:1fr;}.card{padding:22px 16px;}}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="wrap">
+  <div class="hdr">
+    <div class="logo-row">
+      <img src="iconca.jpg" class="logo-img" alt="EcoBala">
+      <span class="logo-name">EcoBala</span>
+    </div>
+    <div class="h-title" id="hTitle">Выберите платформу</div>
+    <div class="h-sub" id="hSub">Экологическое образование Казахстана</div>
+  </div>
+  <div class="card">
+    <div class="lang-bar">
+      <div class="lsw">
+        <button class="lb on" data-l="ru">РУС</button>
+        <button class="lb" data-l="kz">ҚАЗ</button>
+      </div>
+    </div>
+    <div class="platforms">
+      <!-- Kids -->
+      <div class="platform-card pk">
+        <img src="iconcakids.jpg" class="p-img" alt="Kids">
+        <div class="p-name">EcoBala Kids</div>
+        <div class="p-age" id="kAge">6-12 лет</div>
+        <div class="p-btns">
+          <a href="register-kids.html" class="p-btn pk p-btn-reg" id="kReg">Регистрация</a>
+          <a href="login-kids.html" class="p-btn pk p-btn-login" id="kLogin">Войти</a>
+        </div>
+      </div>
+      <!-- Teen -->
+      <div class="platform-card pt">
+        <img src="iconcateen.jpg" class="p-img" alt="Teen">
+        <div class="p-name">EcoBala Teen</div>
+        <div class="p-age" id="tAge">13-18 лет</div>
+        <div class="p-btns">
+          <a href="register-teen.html" class="p-btn pt p-btn-reg" id="tReg">Регистрация</a>
+          <a href="login-teen.html" class="p-btn pt p-btn-login" id="tLogin">Войти</a>
+        </div>
+      </div>
+    </div>
+    <div class="teacher-row">
+      <div class="teacher-link">
+        <span id="teacherText">Вы учитель?</span>
+        <a href="teacher.html" id="teacherLink"> Учительская панель →</a>
+      </div>
+    </div>
+  </div>
+  <div class="back-row"><a href="index.html" id="backLink">← На главную</a></div>
+</div>
+<script>
+const T={
+  ru:{title:'Выберите платформу',sub:'Экологическое образование Казахстана',kAge:'6-12 лет',tAge:'13-18 лет',kReg:'Регистрация',kLogin:'Войти',tReg:'Регистрация',tLogin:'Войти',teacher:'Вы учитель?',teacherLink:' Учительская панель →',back:'← На главную'},
+  kz:{title:'Платформаны таңдаңыз',sub:'Қазақстанның экологиялық білімі',kAge:'6-12 жас',tAge:'13-18 жас',kReg:'Тіркелу',kLogin:'Кіру',tReg:'Тіркелу',tLogin:'Кіру',teacher:'Мұғалімсіз бе?',teacherLink:' Мұғалімдер панелі →',back:'← Басты бетке'}
+};
+let lang=localStorage.getItem('selectedLanguage')||'ru';
+function setLang(l){
+  lang=l;localStorage.setItem('selectedLanguage',l);
+  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.dataset.l===l));
+  const t=T[l];
+  document.getElementById('hTitle').textContent=t.title;
+  document.getElementById('hSub').textContent=t.sub;
+  document.getElementById('kAge').textContent=t.kAge;
+  document.getElementById('tAge').textContent=t.tAge;
+  document.getElementById('kReg').textContent=t.kReg;
+  document.getElementById('kLogin').textContent=t.kLogin;
+  document.getElementById('tReg').textContent=t.tReg;
+  document.getElementById('tLogin').textContent=t.tLogin;
+  document.getElementById('teacherText').textContent=t.teacher;
+  document.getElementById('teacherLink').textContent=t.teacherLink;
+  document.getElementById('backLink').textContent=t.back;
+}
+document.querySelectorAll('.lb').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
+setLang(lang);
+</script>
+</body>
+</html>
+

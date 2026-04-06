@@ -1,0 +1,340 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoBala Kids - Регистрация</title>
+<link rel="icon" href="iconcakids.jpg" type="image/jpeg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap&subset=cyrillic,cyrillic-ext" rel="stylesheet">
+<style>
+  /* ── Казахский шрифт фикс ───────────────────────────────────────────
+     Noto Sans покрывает казахские буквы: Ә Ғ Қ Ң Ө Ұ Ү І
+     unicode-range заставляет браузер использовать Noto Sans ТОЛЬКО
+     для символов которых нет в Nunito (казахский расширенный кириллица)
+  ─────────────────────────────────────────────────────────────────── */
+  @font-face {
+    font-family: 'KazFont';
+    src: local('Noto Sans');
+    unicode-range: U+0400-045F, U+04D9, U+04E9, U+04B1, U+04A3, U+04BB,
+                   U+049B, U+04A2, U+04E8, U+04B0, U+0456, U+04AF, U+049A,
+                   U+04BA, U+04D8; /* казахский кириллический диапазон */
+  }
+  /* Глобальный стек: сначала Nunito (латиница/цифры), потом Noto Sans (казахский) */
+  *, body, input, textarea, select, button, span, div, p, h1, h2, h3, h4, h5, h6, a, li {
+    font-family: 'Nunito', 'Noto Sans', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+  }
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{font-family:'Nunito','Noto Sans',sans-serif;background:#EFF8FF;min-height:100vh;padding:20px;position:relative;overflow-x:hidden;}
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.b1{width:500px;height:500px;background:rgba(74,163,223,0.1);top:-150px;right:-100px;}
+.b2{width:350px;height:350px;background:rgba(14,165,233,0.08);bottom:-100px;left:-80px;}
+.wrap{max-width:600px;margin:0 auto;position:relative;z-index:1;padding-bottom:40px;}
+
+/* Header */
+.page-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0 20px;
+}
+.logo-row{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-img{width:38px;height:38px;border-radius:10px;object-fit:cover;}
+.logo-name{font-size:17px;font-weight:900;color:#1565C0;}
+.back-a{font-size:14px;font-weight:700;color:#64748b;text-decoration:none;}
+.back-a:hover{color:#1565C0;}
+
+/* Card */
+.card-title-block{text-align:center;margin-bottom:24px;}
+.ct{font-size:24px;font-weight:900;color:#0f172a;margin-bottom:5px;}
+.cs{font-size:14px;color:#64748b;font-weight:600;}
+
+.card{background:#fff;border-radius:24px;padding:28px 24px;box-shadow:0 8px 40px rgba(74,163,223,0.12);border:1.5px solid rgba(74,163,223,0.1);}
+
+.lang-bar{display:flex;justify-content:flex-end;margin-bottom:20px;}
+.lsw{display:flex;background:#E3F2FD;border-radius:20px;padding:3px;}
+.lbtn{padding:5px 14px;border-radius:17px;border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:#1565C0;transition:all 0.2s;}
+.lbtn.on{background:#1565C0;color:#fff;box-shadow:0 2px 8px rgba(21,101,192,0.25);}
+
+/* Section divider */
+.sec-label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;margin:20px 0 12px;padding-left:2px;}
+
+/* Form grid */
+.fg{margin-bottom:14px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+@media(max-width:480px){.fg2{grid-template-columns:1fr;}}
+.fl{display:block;font-size:12px;font-weight:800;color:#0f172a;margin-bottom:6px;}
+.fi,.fsel{
+  width:100%;padding:11px 14px;border-radius:11px;border:2px solid #e2e8f0;
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:#0f172a;
+  background:#f8fafc;outline:none;transition:all 0.2s;
+}
+.fi:focus,.fsel:focus{border-color:#4AA3DF;background:#fff;box-shadow:0 0 0 3px rgba(74,163,223,0.1);}
+.iw{position:relative;}
+.ii{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.fi.ic{padding-left:38px;}
+.eyeb{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:#94a3b8;}
+
+/* Consent */
+.consent-row{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#475569;line-height:1.6;margin-bottom:18px;}
+.consent-row input[type=checkbox]{width:17px;height:17px;margin-top:2px;flex-shrink:0;accent-color:#1565C0;cursor:pointer;}
+.consent-row a{color:#1565C0;font-weight:700;text-decoration:none;}
+
+/* Msg */
+.msg{border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;margin-bottom:14px;display:none;line-height:1.5;}
+.msg.err{background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;}
+.msg.ok{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9;}
+
+/* Submit */
+.sbtn{
+  width:100%;padding:14px;border-radius:14px;border:none;
+  background:linear-gradient(135deg,#1565C0,#1E88E5);color:#fff;
+  font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;
+  cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(21,101,192,0.22);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.sbtn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(21,101,192,0.3);}
+.sbtn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+.sbtn .sp{width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.sbtn.ld .bt{display:none;}.sbtn.ld .sp{display:block;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.login-link{text-align:center;margin-top:18px;font-size:14px;color:#64748b;font-weight:600;}
+.login-link a{color:#1565C0;font-weight:800;text-decoration:none;}
+.login-link a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="wrap">
+  <div class="page-header">
+    <a href="index.html" class="logo-row">
+      <img src="iconcakids.jpg" class="logo-img" alt="Kids">
+      <span class="logo-name">EcoBala Kids</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div class="lsw">
+        <button class="lbtn on" data-l="ru">РУС</button>
+        <button class="lbtn" data-l="kz">ҚАЗ</button>
+      </div>
+      <a href="register.html" class="back-a" id="backA">← Назад</a>
+    </div>
+  </div>
+
+  <div class="card-title-block">
+    <div class="ct" id="ct">Регистрация в Kids</div>
+    <div class="cs" id="cs">Создайте аккаунт для детей 5-12 лет</div>
+  </div>
+
+  <div class="card">
+    <div class="msg err" id="eMsg"></div>
+    <div class="msg ok" id="oMsg"></div>
+
+    <form id="regForm">
+      <!-- Ребёнок -->
+      <div class="sec-label" id="secChild">👶 Данные ребёнка</div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl" id="lCName">Имя ребёнка</label>
+          <input class="fi" name="child_name" type="text" required placeholder="Алия">
+        </div>
+        <div class="fg">
+          <label class="fl" id="lCSur">Фамилия ребёнка</label>
+          <input class="fi" name="child_surname" type="text" required placeholder="Касымова">
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl" id="lNick">Никнейм</label>
+          <input class="fi" name="nickname" type="text" maxlength="20" required placeholder="eco_kid">
+        </div>
+        <div class="fg">
+          <label class="fl" id="lAge">Возраст</label>
+          <input class="fi" name="age" type="number" min="5" max="12" required placeholder="10">
+        </div>
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl" id="lClass">Класс</label>
+          <select class="fsel" name="class" required>
+            <option value="" id="selClass">Выберите класс</option>
+            <option value="1">1 класс</option><option value="2">2 класс</option>
+            <option value="3">3 класс</option><option value="4">4 класс</option>
+            <option value="5">5 класс</option><option value="6">6 класс</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl" id="lSchool">Школа</label>
+          <select class="fsel" name="school" required>
+            <option value="" id="selSchool">Выберите школу</option>
+            <option value="2">№2 Гимназия</option>
+            <option value="5">№5 Гимназия</option>
+            <option value="6">№6 Гимназия</option>
+            <option value="1">№1 Средняя школа</option>
+            <option value="3">№3 Средняя школа</option>
+            <option value="4">№4 Средняя школа</option>
+            <option value="7">№7 Средняя школа</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Родитель -->
+      <div class="sec-label" id="secParent">👨‍👩‍👧 Данные родителя</div>
+      <div class="fg">
+        <label class="fl" id="lPName">ФИО родителя</label>
+        <input class="fi" name="parent_name" type="text" required placeholder="Касымова Айгуль Маратовна">
+      </div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl" id="lPhone">Телефон родителя</label>
+          <input class="fi" name="parent_phone" type="tel" required placeholder="+7 777 000 0000">
+        </div>
+        <div class="fg">
+          <label class="fl" id="lEmail">Email родителя</label>
+          <input class="fi" name="email" type="email" required autocomplete="email" placeholder="example@mail.com">
+        </div>
+      </div>
+
+      <!-- Пароль -->
+      <div class="sec-label" id="secPass">🔐 Пароль</div>
+      <div class="fg2">
+        <div class="fg">
+          <label class="fl" id="lPass">Пароль</label>
+          <div class="iw">
+            <input class="fi ic" name="password" type="password" autocomplete="new-password" required placeholder="Минимум 6 символов">
+            <button type="button" class="eyeb" onclick="togglePw(this)">👁</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl" id="lPass2">Подтвердите пароль</label>
+          <div class="iw">
+            <input class="fi ic" name="confirm_password" type="password" autocomplete="new-password" required placeholder="Повторите пароль">
+            <button type="button" class="eyeb" onclick="togglePw(this)">👁</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Согласие -->
+      <label class="consent-row">
+        <input type="checkbox" name="consent" required>
+        <span id="consentText">Я согласен(на) с <a href="privacy.html" target="_blank">Политикой конфиденциальности</a> и <a href="terms.html" target="_blank">Условиями использования</a></span>
+      </label>
+
+      <button type="submit" class="sbtn" id="sbtn">
+        <span class="bt" id="bTxt">Зарегистрироваться</span>
+        <div class="sp"></div>
+      </button>
+    </form>
+
+    <div class="login-link">
+      <span id="haveAcc">Уже есть аккаунт?</span>
+      <a href="login-kids.html" id="loginLnk"> Войти как Kid</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const T = {
+  ru:{ct:'Регистрация в Kids',cs:'Создайте аккаунт для детей 5-12 лет',secChild:'👶 Данные ребёнка',secParent:'👨‍👩‍👧 Данные родителя',secPass:'🔐 Пароль',cname:'Имя ребёнка',csur:'Фамилия ребёнка',nick:'Никнейм',age:'Возраст',cls:'Класс',school:'Школа',selCls:'Выберите класс',selSch:'Выберите школу',pname:'ФИО родителя',phone:'Телефон родителя',email:'Email родителя',pass:'Пароль',pass2:'Подтвердите пароль',consent:'Я согласен(на) с ',btn:'Зарегистрироваться',haveAcc:'Уже есть аккаунт?',login:' Войти как Kid',back:'← Назад',errPw:'Пароли не совпадают.',errConsent:'Подтвердите согласие.',errRate:'Слишком много попыток. Подождите.',err:'Ошибка при регистрации.',ok:'✅ Регистрация успешна! Перенаправляем…'},
+  kz:{ct:'Kids-ке тіркелу',cs:'5-12 жастағы балалар үшін аккаунт жасаңыз',secChild:'👶 Бала деректері',secParent:'👨‍👩‍👧 Ата-ана деректері',secPass:'🔐 Құпиясөз',cname:'Баланың аты',csur:'Баланың тегі',nick:'Лақап ат',age:'Жасы',cls:'Сынып',school:'Мектеп',selCls:'Сыныпты таңдаңыз',selSch:'Мектепті таңдаңыз',pname:'Ата-ананың аты-жөні',phone:'Ата-ананың телефоны',email:'Ата-ананың email',pass:'Құпиясөз',pass2:'Құпиясөзді растаңыз',consent:'Мен келісемін: ',btn:'Тіркелу',haveAcc:'Аккаунт бар ма?',login:' Kid ретінде кіру',back:'← Артқа',errPw:'Құпиясөздер сәйкес емес.',errConsent:'Саясатқа келісіміңізді растаңыз.',errRate:'Тым көп әрекет. Күте тұрыңыз.',err:'Тіркелу қатесі.',ok:'✅ Тіркелу сәтті! Бағытталуда…'}
+};
+
+let lang = localStorage.getItem('selectedLanguage') || 'ru';
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('selectedLanguage', l);
+  document.querySelectorAll('.lbtn').forEach(b => b.classList.toggle('on', b.dataset.l === l));
+  const t = T[l];
+  document.getElementById('ct').textContent = t.ct;
+  document.getElementById('cs').textContent = t.cs;
+  document.getElementById('secChild').textContent = t.secChild;
+  document.getElementById('secParent').textContent = t.secParent;
+  document.getElementById('secPass').textContent = t.secPass;
+  document.getElementById('lCName').textContent = t.cname;
+  document.getElementById('lCSur').textContent = t.csur;
+  document.getElementById('lNick').textContent = t.nick;
+  document.getElementById('lAge').textContent = t.age;
+  document.getElementById('lClass').textContent = t.cls;
+  document.getElementById('lSchool').textContent = t.school;
+  document.getElementById('selClass').textContent = t.selCls;
+  document.getElementById('selSchool').textContent = t.selSch;
+  document.getElementById('lPName').textContent = t.pname;
+  document.getElementById('lPhone').textContent = t.phone;
+  document.getElementById('lEmail').textContent = t.email;
+  document.getElementById('lPass').textContent = t.pass;
+  document.getElementById('lPass2').textContent = t.pass2;
+  document.getElementById('bTxt').textContent = t.btn;
+  document.getElementById('haveAcc').textContent = t.haveAcc;
+  document.getElementById('loginLnk').textContent = t.login;
+  document.getElementById('backA').textContent = t.back;
+}
+document.querySelectorAll('.lbtn').forEach(b => b.addEventListener('click', () => setLang(b.dataset.l)));
+setLang(lang);
+
+function togglePw(btn) {
+  const inp = btn.previousElementSibling;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+function se(m){const e=document.getElementById('eMsg');e.textContent=m;e.style.display='block';document.getElementById('oMsg').style.display='none';e.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function so(m){const e=document.getElementById('oMsg');e.textContent=m;e.style.display='block';document.getElementById('eMsg').style.display='none';}
+
+let submitting = false;
+document.getElementById('regForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (submitting) return;
+  const t = T[lang];
+  const fd = new FormData(this);
+  const parentName = String(fd.get('parent_name') || '').trim();
+  const childName = String(fd.get('child_name') || '').trim();
+  const childSurname = String(fd.get('child_surname') || '').trim();
+  const nickname = String(fd.get('nickname') || '').trim();
+  if ((parentName && containsProfanity(parentName)) ||
+      (childName && containsProfanity(childName)) ||
+      (childSurname && containsProfanity(childSurname)) ||
+      (nickname && containsProfanity(nickname))) {
+    se(profanityMsg(lang));
+    return;
+  }
+  const pass = fd.get('password'), pass2 = fd.get('confirm_password');
+  if (pass !== pass2) { se(t.errPw); return; }
+  if (!fd.get('consent')) { se(t.errConsent); return; }
+  submitting = true;
+  const btn = document.getElementById('sbtn');
+  btn.classList.add('ld'); btn.disabled = true;
+  document.getElementById('eMsg').style.display = 'none';
+  try {
+    const user = await EcoBalaAuth.registerKid({
+      email: fd.get('email'), password: pass,
+      fullName: fd.get('parent_name'),
+      child_name: fd.get('child_name'),
+      child_surname: fd.get('child_surname'),
+      nickname: fd.get('nickname'),
+      age: Number(fd.get('age')),
+      class: fd.get('class'),
+      school: fd.get('school'),
+      parent_phone: fd.get('parent_phone')
+    });
+    so(t.ok);
+    setTimeout(() => window.location.href = 'kids.html', 1000);
+  } catch(err) {
+    const msg = err && err.message ? err.message : '';
+    se(msg.includes('rate') ? t.errRate : (msg || t.err));
+    btn.classList.remove('ld'); btn.disabled = false;
+    submitting = false;
+  }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="supabase2.js"></script>
+<script>
+// ── Content moderation (encoded) ──────────────────────────────────────────
+const _PF=(function(){try{return atob('0YXRg9C5LNGF0YPRjyzRhdGD0Y4s0YXRg9GP0Lws0YXRg9GP0LzQuCzRhdGD0LXQsizRhdGD0LnQvdGPLNGF0YPQudC90Y4s0L/QuNC30LTQsCzQv9C40LfQtNGLLNC/0LjQt9C00LXRhizQv9C40LfQtNCw0YIs0L/QuNC30LTQsNC90YPQuyzQv9C40LfQtNCw0L3Rg9GCLNC10LHQsNGC0Yws0LXQsdCw0Lss0LXQsdCw0LvQuCzQtdCx0LDQvdGL0Lks0LXQsdCw0L3Rg9GCLNC10LHQsNC90LDRjyzQtdCx0LDQvdGM0LrQvizRgdGD0LrQsCzRgdGD0LrQuCzRgdGD0LrQsNC8LNGB0YPQutC1LNGB0YPRh9C60LAs0YHRg9GH0LDRgCzQsdC70Y/RgtGMLNCx0LvRj9C00Yws0LHQu9GP0LTQtdC5LNCx0LvRj9C00LjQvSzQsdC70Y/QtNGB0Los0LHQu9GP0LTQuNC90LAs0LHQu9GP0LTRgdGC0LLQvizQvNGD0LTQsNC6LNC80YPQtNCw0LrQuCzQvNGD0LTQsNC60LDQvCzQvNGD0LTQuNC70LAs0LzRg9C00LjQuyzQt9Cw0LvRg9C/0LAs0LfQsNC70YPQv9C40L0s0ZHQsdCw0L0s0ZHQsdCw0L3Ri9C5LNGR0LEs0ZHQsdC90YPRgizRkdCx0L3Rg9C7LNGR0LHQvdGD0YLRjCzQv9C40LfQtNC10YLRjCzQv9C40LfQtNC40YIs0L/QuNC30LTQsNCx0L7QuyzQv9C40LfQtNCw0L3Rg9GC0Yws0YjQu9GO0YXQsCzRiNC70Y7RhdC4LNGI0LvRjtGF0LDQvCzQvNGA0LDQt9GMLNC80YDQsNC30Lgs0YPQtdCx0LDQvSzRg9GR0LHQsNC9LNGD0ZHQsSzQv9C40LfQtNGO0Los0L/QuNC30LfRjtC60Lgs0LPQsNC90LTQvtC9LNCz0LDQvdC00L7QvdGLLNC90LDRhdGD0Lks0L/QvtGF0YPQuSzQvdCw0YXQtdGALGFzcyxmdWNrLHNoaXQsYml0Y2gsY29jayxkaWNrLHB1c3N5LGN1bnQsbmlnZ2VyLGZhZ2dvdCzRgdC40LrQsNC6LNGB0LjQutGW0L0s0YHQuNC60Lgs0YHQuNC60LBxLNCx0L7SmyzQsdC+0LrRgtGLLNGI0LXRiNGW0qMs0YjQtdGI0LXSo9C00ZYs0YjQtdGI0LXSo9C90ZbSoyzQsdCw0LnSk9GL0Lcs0LHQsNC50pPRi9C30YvQvSzQuNGC0ZbSoyzQuNGC0YHRltKjLNC40YLRgtC10Lks0LjRgtC/0ZbQvSzQtdGB0LXQuizQtdGB0LXQs9GW0qMs0LXRgdC10LrRgdGW0qMs0L/Ri9GB0YvSmyzQv9GL0YjRi9C6LNC/0LXQt9C00LXRgizQv9GW0LfQtNC10YIs0LbQtdGB0ZbRgCzQttC10YHRltGA0LTQtdC5LNGB0LLQvtC70L7Rh9GMLNGD0LHQu9GO0LTQvtC6LNGD0LHQu9GO0LTQutC4LNC70L7RiNCw0Lo=').split(',');}catch(e){return [];}})();
+function containsProfanity(t){if(!t)return false;const l=t.toLowerCase().replace(/[\s\-\.]+/g,'');return _PF.some(w=>l.includes(w.replace(/[\s\-\.]+/g,'')));}
+function profanityMsg(l){return l==='kz'?'⚠️ Бұл сөзді қолдануға болмайды!':'⚠️ Нельзя использовать такие слова!';}
+function chatProfanityMsg(l){return l==='kz'?'⚠️ Бұл сөзді қолдануға болмайды!':'⚠️ Нельзя использовать такие слова!';}
+</script>
+</body>
+</html>

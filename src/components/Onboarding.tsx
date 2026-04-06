@@ -52,9 +52,17 @@ const Onboarding = ({ role }: Props) => {
 
   const canNext = step === 0 ? !!lang : step === 1 ? !!source : true;
 
+  const getAuthUrl = () => {
+    if (role === "kids") return "/register-kids.html";
+    if (role === "teen") return "/register-teen.html";
+    return "/register.html";
+  };
+
   const next = () => {
     if (step < 2) {
       setStep(step + 1);
+    } else {
+      window.location.href = getAuthUrl();
     }
   };
 
