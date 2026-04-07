@@ -17,6 +17,9 @@ if (!fs.existsSync(distDir)) {
 const htmlFiles = fs.readdirSync(rootDir)
   .filter(file => file.endsWith('.html') && !file.startsWith('.'));
 
+// Files to copy alongside HTML files
+const supportFiles = ['ai-helper.js', 'supabase2.js', 'eco-reward-boost.js'];
+
 console.log(`Copying ${htmlFiles.length} HTML files to dist...`);
 
 htmlFiles.forEach(file => {
@@ -32,5 +35,24 @@ htmlFiles.forEach(file => {
   }
 });
 
-console.log('✓ HTML files copied successfully!');
+// Copy support JS files
+console.log(`\nCopying ${supportFiles.length} support files to dist...`);
+supportFiles.forEach(file => {
+  const src = path.join(rootDir, file);
+  const dest = path.join(distDir, file);
+  
+  if (!fs.existsSync(src)) {
+    return; // Skip if file doesn't exist
+  }
+  
+  try {
+    const content = fs.readFileSync(src, 'utf-8');
+    fs.writeFileSync(dest, content);
+    console.log(`✓ Copied ${file}`);
+  } catch (err) {
+    console.error(`✗ Failed to copy ${file}: ${err.message}`);
+  }
+});
+
+console.log('✓ All files copied successfully!');
 

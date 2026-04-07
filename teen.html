@@ -853,7 +853,7 @@ const botFAQ = {
     {kw:['школа','рейтинг школ','класс'],r:'В рейтинге видна школа и класс. Соревнуйся с одноклассниками - помогай своей школе войти в топ! 🏫'},
     {kw:['экология','природа'],r:'Экология = всё связано. Вырубка лесов → меньше O₂ → потепление → таяние льдов. Каждое действие имеет последствия 🌍'},
     {kw:['хромтау','актобе'],r:'EcoBala создана в Хромтау, Актобинская область! Масштабируемся на весь Казахстан 🌱'},
-    {kw:['учитель','кабинет','kahoot'],r:'Учителям - специальная панель для EcoGame на уроке! /teacher в @Ecobalabot 👩‍🏫'},
+    {kw:['учитель','кабинет','ecogame'],r:'Учителям - специальная панель для EcoGame на уроке! /teacher в @Ecobalabot 👩‍🏫'},
     {kw:['помог','ошибка','проблем'],r:'Технические проблемы? Telegram: @Ecobalabot или email: ecobalakz@gmail.com 📧'},
     {kw:['совет','идея','как начать'],r:'Совет: начни с простого квеста - посади дерево или убери мусор в парке. Фотографируй процесс и отправь отчёт! 💪'},
   ],
@@ -1278,13 +1278,40 @@ function showTyping(){
 }
 function removeTyping(){const t=document.getElementById('typingInd');if(t)t.remove();}
 
-function botReply(txt){
+async function botReply(txt){
   showTyping();
-  const lower=txt.toLowerCase();
-  const faq=botFAQ[lang];
-  let reply=lang==='ru'?'Интересный вопрос! 🤔 Попробуй спросить о квестах, карте или баллах!':'Қызықты сұрақ! 🤔 Квесттер, карта туралы сұраңыз!';
-  for(const item of faq){if(item.kw.some(k=>lower.includes(k))){reply=item.r;break;}}
-  setTimeout(()=>{removeTyping();addMsg(reply,'bot');},800+Math.random()*400);
+  try {
+    // Используем AI API если доступен, иначе fallback на FAQ
+    if (typeof callAIAPI === 'function') {
+      const context = 'hamster_teen';
+      const result = await callAIAPI(txt, context);
+      
+      removeTyping();
+      if (result.success) {
+        addMsg(result.message, 'bot');
+      } else {
+        const fallback = lang==='ru' 
+          ? 'Извините, я сейчас не могу ответить. Попробуйте позже! 🐹'
+          : 'Кешіріңіз, қазір жауап бере алмаймын. Кейінірек қайтала көріңіз! 🐹';
+        addMsg(fallback, 'bot');
+      }
+    } else {
+      // Fallback на старую FAQ систему если AI не загружен
+      const lower=txt.toLowerCase();
+      const faq=botFAQ[lang];
+      let reply=lang==='ru'?'Интересный вопрос! 🤔 Спроси о квестах, карте или баллах!':'Қызықты сұрақ! 🤔 Квесттер, карта туралы сұраңыз!';
+      for(const item of faq){if(item.kw.some(k=>lower.includes(k))){reply=item.r;break;}}
+      removeTyping();
+      addMsg(reply,'bot');
+    }
+  } catch(e) {
+    console.error('botReply error:', e);
+    removeTyping();
+    const err = lang==='ru' 
+      ? 'Хм, что-то пошло не так! 🤔'
+      : 'Бір ойны болды! 🤔';
+    addMsg(err, 'bot');
+  }
 }
 
 function sendChat(){
@@ -2120,52 +2147,86 @@ async function loadRatingFromDB() {
   try {
     const data = await EcoBalaDB.getLeaderboard('teen');
     if (!data.length) return;
-    _teenLbAll = data;
+    // Нормализуем данные - удаляем пробелы и приводим к единому формату
+    _teenLbAll = data.map(p=>({
+      ...p,
+      school: (p.school||'').trim(),
+      class: (p.class||'').toString().trim()
+    }));
+    console.log('📊 Рейтинг Teen загружен:', _teenLbAll.length, 'игроков');
     renderTeenLeaderboard();
-  } catch(e) { console.error('loadRatingFromDB:', e); }
+  } catch(e) { console.error('loadRatingFromDB ошибка:', e); }
 }
 
 function renderTeenLeaderboard() {
   const data = _teenLbAll;
   if (!data.length) return;
-  const schools = [...new Set(data.map(p=>(p.school||'').trim()).filter(Boolean))].sort();
-  const classes = [...new Set(data.map(p=>(p.class||'').trim()).filter(Boolean))].sort((a,b)=>parseInt(a)-parseInt(b));
+  // Извлекаем уникальные школы и классы из нормализованных данных
+  const schools = [...new Set(data.map(p=>p.school).filter(Boolean))].sort();
+  const classes = [...new Set(data.map(p=>p.class).filter(Boolean))].sort((a,b)=>{
+    const numA=parseInt(a)||0, numB=parseInt(b)||0;
+    return numA-numB;
+  });
+  console.log('🏫 Teen Школы найдены:', schools.length, '📚 Классы найдены:', classes.length);
   const fEl = document.getElementById('teenLbFilter');
   if (fEl) fEl.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-    <select onchange="_teenLbFilter.school=this.value;renderTeenLeaderboard()" style="padding:6px 10px;border-radius:10px;border:1.5px solid var(--green-light);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;background:var(--green-pale);color:var(--green);outline:none;">
+    <select onchange="_teenLbFilter.school=this.value;console.log('🔍 Teen Фильтр школа:',this.value);renderTeenLeaderboard()" style="padding:6px 10px;border-radius:10px;border:1.5px solid var(--green-light);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;background:var(--green-pale);color:var(--green);outline:none;">
       <option value="">${lang==='kz'?'Барлық мектептер':'Все школы'}</option>
       ${schools.map(s=>`<option value="${s}"${_teenLbFilter.school===s?' selected':''}>${s}</option>`).join('')}
     </select>
-    <select onchange="_teenLbFilter.class=this.value;renderTeenLeaderboard()" style="padding:6px 10px;border-radius:10px;border:1.5px solid var(--green-light);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;background:var(--green-pale);color:var(--green);outline:none;">
+    <select onchange="_teenLbFilter.class=this.value;console.log('🔍 Teen Фильтр класс:',this.value);renderTeenLeaderboard()" style="padding:6px 10px;border-radius:10px;border:1.5px solid var(--green-light);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;background:var(--green-pale);color:var(--green);outline:none;">
       <option value="">${lang==='kz'?'Барлық сыныптар':'Все классы'}</option>
       ${classes.map(c=>`<option value="${c}"${_teenLbFilter.class===c?' selected':''}>${c} ${lang==='kz'?'сынып':'кл.'}</option>`).join('')}
     </select>
-    ${(_teenLbFilter.school||_teenLbFilter.class)?`<button onclick="_teenLbFilter={school:'',class:''};renderTeenLeaderboard()" style="padding:6px 12px;border-radius:10px;border:none;background:#FFEBEE;color:#C62828;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕</button>`:''}
+    ${(_teenLbFilter.school||_teenLbFilter.class)?`<button onclick="_teenLbFilter={school:'',class:''};console.log('🔄 Teen Фильтр сброшен');renderTeenLeaderboard()" style="padding:6px 12px;border-radius:10px;border:none;background:#FFEBEE;color:#C62828;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✕</button>`:''}
   </div>`;
   let filtered = data;
-  if (_teenLbFilter.school) filtered = filtered.filter(p=>(p.school||'').trim()===_teenLbFilter.school);
-  if (_teenLbFilter.class) filtered = filtered.filter(p=>(p.class||'').trim()===_teenLbFilter.class);
+  // Применяем фильтры с точной проверкой
+  if (_teenLbFilter.school) {
+    const before=filtered.length;
+    filtered = filtered.filter(p=>p.school===_teenLbFilter.school);
+    console.log(`✅ Teen по школе "${_teenLbFilter.school}": ${before}→${filtered.length} игроков`);
+  }
+  if (_teenLbFilter.class) {
+    const before=filtered.length;
+    filtered = filtered.filter(p=>p.class===_teenLbFilter.class);
+    console.log(`✅ Teen по классу "${_teenLbFilter.class}": ${before}→${filtered.length} игроков`);
+  }
+  console.log('📋 Teen Итого показано:', filtered.length, 'из', data.length, 'игроков');
   const top3 = filtered.slice(0,3);
   const pod = [top3[1],top3[0],top3[2]].filter(Boolean);
   const h=['90px','120px','72px'],grads=['linear-gradient(to top,#FF8F00,#FFD54F)','linear-gradient(to top,#1B5E20,#43A047)','linear-gradient(to top,#5D4037,#8D6E63)'],medals=['🥈','🥇','🥉'];
   const podEl = document.getElementById('teenPodium');
-  if(podEl) podEl.innerHTML = pod.map((p,i)=>`<div class="lb-place">
+  if(podEl) {
+    if(filtered.length<3) {
+      console.warn('⚠️ Teen Недостаточно игроков для подиума (нужно 3, есть ' + filtered.length + ')');
+    }
+    podEl.innerHTML = pod.map((p,i)=>`<div class="lb-place">
     <span class="lb-ava">${p.avatar_url?`<img src="${p.avatar_url}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`:p.avatar||'🧑'}</span>
     <div class="lb-name">${(p.name||'').split(' ')[0]}</div>
     <div class="lb-pts-sm">${p.points||0}</div>
     <div class="lb-podium-bar" style="background:${grads[i]};height:${h[i]};"><div class="lb-num">${medals[i]}</div></div>
   </div>`).join('');
+  }
   const listEl = document.getElementById('teenLbList');
-  if(listEl) listEl.innerHTML = filtered.slice(0,30).map((p,i)=>{
-    const sc=p.school||'', cl=p.class?` • ${p.class} ${lang==='kz'?'сынып':'кл.'}`:'';
-    return `<div class="lb-row${cu&&p.id===cu.id?' me':''}">
+  if(listEl) {
+    if(filtered.length===0) {
+      listEl.innerHTML=`<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:14px;">
+        ${lang==='kz'?'Ойыншылар табылмады':'Игроки не найдены'}
+      </div>`;
+    } else {
+      listEl.innerHTML = filtered.slice(0,30).map((p,i)=>{
+        const sc=p.school||'', cl=p.class?` • ${p.class} ${lang==='kz'?'сынып':'кл.'}`:'';
+        return `<div class="lb-row${cu&&p.id===cu.id?' me':''}">
       <div class="lb-rank">${i+1}</div>
       <div class="lb-row-ava">${p.avatar_url?`<img src="${p.avatar_url}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">`:p.avatar||'🧑'}</div>
       <div style="flex:1;min-width:0;"><div class="lb-row-name">${p.name||'Аноним'}${cu&&p.id===cu.id?` (${lang==='ru'?'Ты':'Сен'})`:''}</div>
       <div style="font-size:11px;color:var(--text-muted);">${sc}${cl}</div></div>
       <div class="lb-row-pts">${p.points||0}</div>
     </div>`;
-  }).join('');
+      }).join('');
+    }
+  }
 }
 
 // Выход
@@ -2526,6 +2587,7 @@ function rankName(p){var st=state(p),current=userRef();return '<span class="eco-
 })();
 /* ECOBALA MOBILE PROFILE UPGRADE END */
 </script>
+<script src="ai-helper.js"></script>
 </body>
 </html>
 
