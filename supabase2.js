@@ -344,7 +344,7 @@ window.EcoBalaAuth = {
             school: userData.school || '',
             parent_phone: userData.parent_phone || '',
             points: 0, level: 1, badges: [], is_active: true
-        }]).select().single();
+        }]).select('id,email,role,full_name,nickname').single();
         if (insertResult.error) throw insertResult.error;
         console.log('profile inserted');
 
@@ -384,7 +384,7 @@ window.EcoBalaAuth = {
             school: userData.school || '',
             phone: userData.phone || '',
             points: 0, level: 1, badges: [], is_active: true
-        }]).select().single();
+        }]).select('id,email,role,full_name,nickname').single();
         if (insertResult.error) throw insertResult.error;
         console.log('profile inserted');
 
@@ -402,7 +402,7 @@ window.EcoBalaAuth = {
         var sb = getSB();
         var result = await sb.auth.signInWithPassword({ email: email, password: password });
         if (result.error) throw result.error;
-        var profileResult = await sb.from('users').select('*').eq('id', result.data.user.id).single();
+        var profileResult = await sb.from('users').select('id,email,role,full_name,nickname,points,level').eq('id', result.data.user.id).single();
         if (profileResult.error) throw profileResult.error;
         return profileResult.data;
     },
