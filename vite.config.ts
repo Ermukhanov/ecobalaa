@@ -32,7 +32,10 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        input: htmlFiles,
+        input: {
+          index: path.resolve(__dirname, 'index.html'),
+          ...htmlFiles,
+        },
       },
     },
   };
