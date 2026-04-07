@@ -6,7 +6,7 @@ import fs from "fs";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Get all HTML files from root (except index.html - it's the main React app)
+  // Get all HTML files from root except index.html (Vite handles it by default)
   const htmlFiles: Record<string, string> = {};
   const htmlFileList = fs.readdirSync("./").filter(f => f.endsWith(".html") && f !== "index.html");
   
@@ -32,10 +32,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        input: {
-          main: path.resolve(__dirname, 'index.html'),
-          ...htmlFiles,
-        },
+        input: htmlFiles,
       },
     },
   };
