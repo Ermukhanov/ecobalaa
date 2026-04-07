@@ -4,17 +4,17 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import fs from "fs";
 
+// Get all HTML files
+const htmlFiles: Record<string, string> = {};
+const htmlFileList = fs.readdirSync("./").filter(f => f.endsWith(".html"));
+
+htmlFileList.forEach(file => {
+  const name = file.replace(".html", "");
+  htmlFiles[name] = path.resolve(__dirname, file);
+});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Get all HTML files from root except index.html (Vite handles it by default)
-  const htmlFiles: Record<string, string> = {};
-  const htmlFileList = fs.readdirSync("./").filter(f => f.endsWith(".html") && f !== "index.html");
-  
-  htmlFileList.forEach(file => {
-    const name = file.replace(".html", "");
-    htmlFiles[name] = path.resolve(__dirname, file);
-  });
-
   return {
     server: {
       host: "::",
@@ -32,10 +32,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       rollupOptions: {
-        input: {
-          index: path.resolve(__dirname, 'index.html'),
-          ...htmlFiles,
-        },
+        input: htmlFiles,
       },
     },
   };
