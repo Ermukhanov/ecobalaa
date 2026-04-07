@@ -33,6 +33,11 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         input: htmlFiles,
+        output: {
+          entryFileNames: "[name]-[hash].js",
+          chunkFileNames: "[name]-[hash].js",
+          assetFileNames: "[name]-[hash][extname]",
+        },
       },
     },
   };
