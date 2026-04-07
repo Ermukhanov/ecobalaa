@@ -100,6 +100,8 @@ const EcoHamsterAI = ({ userId = "guest", userName = "Friend", onGameInvite }: P
       </div>
     );
   }
+
+  return (
     <div className="fixed bottom-4 right-4 w-96 max-h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-40 border border-green-100">
       {/* Header */}
       <div className="bg-gradient-to-r from-green-400 to-green-600 p-4 rounded-t-2xl flex items-center justify-between">

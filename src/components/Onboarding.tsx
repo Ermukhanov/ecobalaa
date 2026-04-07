@@ -52,6 +52,7 @@ const Onboarding = ({ role }: Props) => {
     } else {
       window.location.href = getAuthUrl();
     }
+  };
 
   const steps = [
     { id: "source", title: t("sourceTitle"), Icon: Megaphone },
