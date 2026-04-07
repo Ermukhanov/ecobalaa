@@ -2,6 +2,8 @@
 // AI HELPER - Real llm.alem.ai API Integration
 // ============================================================
 
+console.log('🤖 AI Helper script starting to load...');
+
 const AI_CONFIG = {
     API_KEY: 'sk-I3ehqk94TiQHwW3V5SS0RQ',
     API_URL: 'https://llm.alem.ai/v1/chat/completions',
