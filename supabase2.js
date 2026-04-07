@@ -339,10 +339,8 @@ window.EcoBalaAuth = {
             child_name: userData.child_name || '',
             child_surname: userData.child_surname || '',
             nickname: userData.nickname || '',
-            age: userData.age || null,
             class: userData.class || '',
             school: userData.school || '',
-            parent_phone: userData.parent_phone || '',
             points: 0, level: 1, badges: [], is_active: true
         }]);
         if (insertResult.error) throw insertResult.error;
@@ -379,10 +377,8 @@ window.EcoBalaAuth = {
             id: uid, email: userData.email, role: 'teen',
             full_name: userData.fullName || '',
             nickname: userData.nickname || '',
-            age: userData.age || null,
             class: userData.class || '',
             school: userData.school || '',
-            phone: userData.phone || '',
             points: 0, level: 1, badges: [], is_active: true
         }]);
         if (insertResult.error) throw insertResult.error;
