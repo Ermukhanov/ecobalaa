@@ -344,7 +344,7 @@ window.EcoBalaAuth = {
             school: userData.school || '',
             parent_phone: userData.parent_phone || '',
             points: 0, level: 1, badges: [], is_active: true
-        }]).select('id,email,role,full_name,nickname').single();
+        }]);
         if (insertResult.error) throw insertResult.error;
         console.log('profile inserted');
 
@@ -355,7 +355,7 @@ window.EcoBalaAuth = {
         } else {
             console.log('NO SESSION - email confirm still on?');
         }
-        return insertResult.data;
+        return { id: uid, email: userData.email, role: 'kids', full_name: userData.fullName, nickname: userData.nickname };
     },
 
     registerTeen: async function(userData) {
@@ -384,7 +384,7 @@ window.EcoBalaAuth = {
             school: userData.school || '',
             phone: userData.phone || '',
             points: 0, level: 1, badges: [], is_active: true
-        }]).select('id,email,role,full_name,nickname').single();
+        }]);
         if (insertResult.error) throw insertResult.error;
         console.log('profile inserted');
 
@@ -395,7 +395,7 @@ window.EcoBalaAuth = {
         } else {
             console.log('NO SESSION - email confirm still on?');
         }
-        return insertResult.data;
+        return { id: uid, email: userData.email, role: 'teen', full_name: userData.fullName, nickname: userData.nickname };
     },
 
     login: async function(email, password) {
