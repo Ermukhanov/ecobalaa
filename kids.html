@@ -1363,6 +1363,22 @@ function joinRoom() {
 // Leaderboard
 // renderLB removed - uses loadRatingFromDB from DB
 
+// Wait for AI API to load (with timeout)
+let _aiLoadAttempts = 0;
+async function ensureAILoaded() {
+  // Wait maximum 5 seconds (10 attempts x 500ms)
+  while (_aiLoadAttempts < 10 && typeof callAIAPI !== 'function') {
+    _aiLoadAttempts++;
+    console.log(`⏳ Waiting for AI API... attempt ${_aiLoadAttempts}/10`);
+    await new Promise(r => setTimeout(r, 500));
+  }
+  if (typeof callAIAPI === 'function') {
+    console.log('✅ AI API loaded after', _aiLoadAttempts, 'attempts');
+  } else {
+    console.warn('⚠️ AI API not loaded, will use FAQ fallback');
+  }
+}
+
 // Chatbot
 function renderSuggestions() {
   document.getElementById('chatSuggestions').innerHTML = suggestions[lang].map(s=>
@@ -1438,21 +1454,34 @@ function removeTyping() {
 async function botReply(txt) {
   showTyping();
   try {
+    console.log('🐹 Kids Bot Reply triggered');
+    
+    // Убедимся что AI загружен (с timeout)
+    await ensureAILoaded();
+    
+    console.log('callAIAPI type:', typeof callAIAPI);
+    
     // Используем AI API если доступен, иначе fallback на FAQ
     if (typeof callAIAPI === 'function') {
+      console.log('✅ callAIAPI доступен, вызываем...');
       const context = 'hamster_kids';
       const result = await callAIAPI(txt, context);
       
+      console.log('AI Result:', result);
+      
       removeTyping();
       if (result.success) {
+        console.log('✅ AI Success, показываем ответ');
         addMsg(result.message, 'bot');
       } else {
+        console.warn('❌ AI Error:', result.error);
         const fallback = lang==='ru' 
           ? 'Извините, я сейчас не могу ответить. Попробуйте позже! 🐹'
           : 'Кешіріңіз, қазір жауап бере алмаймын. Кейінірек қайтала көріңіз! 🐹';
         addMsg(fallback, 'bot');
       }
     } else {
+      console.warn('⚠️ callAIAPI не загружен даже после ожидания, используем FAQ fallback');
       // Fallback на старую FAQ систему если AI не загружен
       const lower = txt.toLowerCase();
       const faq = botFAQ[lang];
@@ -1466,7 +1495,7 @@ async function botReply(txt) {
       addMsg(reply, 'bot');
     }
   } catch(e) {
-    console.error('botReply error:', e);
+    console.error('❌ botReply error:', e);
     removeTyping();
     const err = lang==='ru' 
       ? 'Хм, что-то пошло не так! 🤔'

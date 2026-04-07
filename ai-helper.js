@@ -48,13 +48,18 @@ Language: Russian.`
 // Main AI call function
 async function callAIAPI(userMessage, context = 'hamster_kids') {
     try {
+        console.log('🤖 AI Call Start:', { context, messageLength: userMessage.length });
+        
         const systemPrompt = SYSTEM_PROMPTS[context] || SYSTEM_PROMPTS.hamster_kids;
+        
+        console.log(`📨 Sending request to ${AI_CONFIG.API_URL}`);
         
         const response = await fetch(AI_CONFIG.API_URL, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${AI_CONFIG.API_KEY}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 model: AI_CONFIG.MODEL,
@@ -73,14 +78,27 @@ async function callAIAPI(userMessage, context = 'hamster_kids') {
             })
         });
 
+        console.log(`📡 Response status: ${response.status}`);
+
         if (!response.ok) {
-            const error = await response.json();
-            console.error('AI API Error:', error);
-            return { error: `API Error: ${error.message || 'Unknown error'}` };
+            let errorData = '';
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = await response.text();
+            }
+            
+            console.error('❌ AI API HTTP Error:', response.status, errorData);
+            return { 
+                error: `HTTP ${response.status}: ${JSON.stringify(errorData)}`, 
+                success: false 
+            };
         }
 
         const data = await response.json();
-        const aiResponse = data.choices[0]?.message?.content || 'No response';
+        const aiResponse = data.choices[0]?.message?.content || 'No response content';
+        
+        console.log('✅ AI Response received:', aiResponse.substring(0, 100));
         
         return { 
             success: true,
@@ -90,12 +108,20 @@ async function callAIAPI(userMessage, context = 'hamster_kids') {
         };
 
     } catch (error) {
-        console.error('AI Call Error:', error);
+        console.error('❌ AI Call Error:', error.message, error);
         return { 
             error: `❌ Error: ${error.message}`,
             success: false
         };
     }
+}
+
+// Test function for debugging
+async function testAIAPI() {
+    console.log('🧪 Testing AI API...');
+    const result = await callAIAPI('Привет!', 'hamster_kids');
+    console.log('Test result:', result);
+    return result;
 }
 
 // For EcoHamster chat in kids/teen
@@ -185,3 +211,8 @@ window.EcoAI = {
     callAPI: callAIAPI,
     streamResponse: streamAIResponse
 };
+
+// Also expose callAIAPI globally for direct use
+window.callAIAPI = callAIAPI;
+
+console.log('✅ AI Helper loaded! callAIAPI is available globally');
